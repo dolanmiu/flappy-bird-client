@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "module": "system",
+        "target": "es6",
+        "lib": ["es6", "dom"],
+        "noImplicitAny": true,
+        "sourceMap": false,
+        //"outDir": "./dist",
+        //"rootDir": "./src",
+        "outFile": "./dist/bundle.js",
+        "declaration": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
+        //"declarationDir": "./dist/typings"
+    },
+    "include": [
+        "src/**/*",
+        "typings/**/*"
+    ],
+    "exclude": [
+        "./node_modules",
+        "./dist"
+    ]
+}
