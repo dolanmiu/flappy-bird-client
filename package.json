@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "webpack": "webpack --config config/webpack.config.js",
     "tsc": "tsc -p .",
-    "start": "npm run tsc"
+    "prestart": "npm run tsc",
+    "start": "live-server --watch=dist"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "awesome-typescript-loader": "^3.0.0-beta.17",
+    "live-server": "^1.1.0",
     "tslint": "^4.1.1",
     "typescript": "^2.1.4",
     "typings": "^2.0.0",
