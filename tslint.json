@@ -13,6 +13,10 @@
         "quotemark": [
             true,
             "single"
+        ],
+        "no-namespace": [
+            true, 
+            "allow-declarations"
         ]
     }
 }
