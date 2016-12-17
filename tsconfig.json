@@ -8,7 +8,7 @@
         //"outDir": "./dist",
         //"rootDir": "./src",
         "outFile": "./dist/bundle.js",
-        "declaration": true,
+        //"declaration": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true
         //"declarationDir": "./dist/typings"

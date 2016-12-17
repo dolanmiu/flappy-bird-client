@@ -4,7 +4,7 @@ namespace Flappy.State {
         private bird: Bird;
 
         public preload(): void {
-            this.game.load.spritesheet('bird', 'src/assets/bird.png', 34, 24);
+            this.game.load.spritesheet('bird', 'assets/bird.png', 34, 24);
         }
 
         public create(): void {
