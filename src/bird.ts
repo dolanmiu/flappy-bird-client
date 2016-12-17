@@ -1,3 +1,5 @@
-class Bird extends Phaser.Sprite {
+namespace Flappy {
+    export class Bird extends Phaser.Sprite {
 
+    }
 }

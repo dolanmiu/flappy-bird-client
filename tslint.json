@@ -15,8 +15,7 @@
             "single"
         ],
         "no-namespace": [
-            true, 
-            "allow-declarations"
+            false
         ]
     }
 }
