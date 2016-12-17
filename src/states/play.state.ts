@@ -13,6 +13,7 @@ namespace Flappy.State {
 
             this.bird = new Bird(this.game, 100, 100, 'bird');
             this.game.physics.enable([this.bird], Phaser.Physics.ARCADE);
+            this.game.camera.follow(this.bird);
 
         }
     }
