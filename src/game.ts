@@ -3,7 +3,7 @@ namespace Flappy {
         constructor(elementName: string) {
             let element = document.getElementById(elementName);
 
-            super(800, 800, Phaser.AUTO, element.id, Flappy.State.Play);
+            super(window.innerWidth, 800, Phaser.AUTO, element.id, Flappy.State.Play, true, true);
         }
     }
 }
