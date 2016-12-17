@@ -8,7 +8,12 @@ namespace Flappy.State {
         }
 
         public create(): void {
+            this.game.physics.startSystem(Phaser.Physics.ARCADE);
+            this.game.physics.arcade.gravity.y = 100;
+
             this.bird = new Bird(this.game, 100, 100, 'bird');
+            this.game.physics.enable([this.bird], Phaser.Physics.ARCADE);
+
         }
     }
 }
