@@ -53,6 +53,21 @@ var Flappy;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
+    class DownPipe extends Phaser.Group {
+        constructor(game, x, y, pipeBodyKey, pipeCapKey) {
+            super(game);
+            let pipeBody = new Phaser.TileSprite(game, x, y, 52, window.innerHeight, pipeBodyKey);
+            pipeBody.anchor.y = 1;
+            let pipeCap = new Phaser.Sprite(game, x, y, pipeCapKey);
+            this.add(pipeBody);
+            this.add(pipeCap);
+            this.game.add.existing(this);
+        }
+    }
+    Flappy.DownPipe = DownPipe;
+})(Flappy || (Flappy = {}));
+var Flappy;
+(function (Flappy) {
     class Sky extends Phaser.TileSprite {
         constructor(game, x, y, width, height, key) {
             super(game, x, y, width, height, key);
@@ -74,6 +89,8 @@ var Flappy;
                 this.game.load.spritesheet('bird', 'assets/bird.png', 34, 24);
                 this.game.load.image('sky', 'assets/sky.png');
                 this.game.load.image('floor', 'assets/land.png');
+                this.game.load.image('pipeBody', 'assets/pipe.png');
+                this.game.load.image('pipeCap', 'assets/pipe-down.png');
             }
             create() {
                 this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -81,6 +98,7 @@ var Flappy;
                 this.sky = new Flappy.Sky(this.game, 0, window.innerHeight - 112, window.innerWidth, 109, 'sky');
                 this.floor = new Flappy.Floor(this.game, 0, window.innerHeight, window.innerWidth, 112, 'floor');
                 this.bird = new Flappy.Bird(this.game, 100, 100, 'bird');
+                let d = new Flappy.DownPipe(this.game, 100, 700, 'pipeBody', 'pipeCap');
                 this.game.physics.enable([this.bird], Phaser.Physics.ARCADE);
                 this.game.camera.follow(this.bird);
             }
