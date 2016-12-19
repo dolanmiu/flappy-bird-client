@@ -5,13 +5,16 @@ var Flappy;
     class Bird extends Phaser.Sprite {
         constructor(game, x, y, key) {
             super(game, x, y, key);
+            this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.game.add.existing(this);
             this.animations.add('fly');
             this.animations.play('fly', 3, true);
             this.anchor.set(0.5, 0.5);
             this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+            let wingSound = this.game.add.audio('wing');
             this.spaceKey.onDown.add(() => {
                 this.body.velocity.y = -jumpSpeed;
+                wingSound.play();
             });
         }
         update() {
@@ -39,6 +42,9 @@ var Flappy;
     class Floor extends Phaser.TileSprite {
         constructor(game, height, key) {
             super(game, 0, window.innerHeight, window.innerWidth, height, key);
+            this.game.physics.enable(this, Phaser.Physics.ARCADE);
+            this.body.immovable = true;
+            this.body.allowGravity = false;
             this.game.add.existing(this);
         }
         update() {
@@ -72,6 +78,10 @@ var Flappy;
             let pipeCap = new Phaser.Sprite(game, x, y, pipeCapKey);
             this.add(this.pipeBody);
             this.add(pipeCap);
+            this.game.physics.enable(this.pipeBody, Phaser.Physics.ARCADE);
+            this.pipeBody.body.allowGravity = false;
+            this.game.physics.enable(pipeCap, Phaser.Physics.ARCADE);
+            pipeCap.body.allowGravity = false;
             this.game.add.existing(this);
         }
         update() {
@@ -143,19 +153,25 @@ var Flappy;
                 this.game.load.image('pipeBody', 'assets/pipe.png');
                 this.game.load.image('pipeDownCap', 'assets/pipe-down.png');
                 this.game.load.image('pipeUpCap', 'assets/pipe-up.png');
+                this.game.load.audio('wing', 'assets/sounds/sfx_wing.ogg');
+                this.game.load.audio('hit', 'assets/sounds/sfx_hit.ogg');
                 this.game.stage.disableVisibilityChange = true;
             }
             create() {
+                this.hitSound = this.game.add.audio('hit');
                 this.game.physics.startSystem(Phaser.Physics.ARCADE);
                 this.game.physics.arcade.gravity.y = 100;
                 this.sky = new Flappy.Sky(this.game, 109, 'sky');
                 this.floor = new Flappy.Floor(this.game, 112, 'floor');
                 this.bird = new Flappy.Bird(this.game, 100, 100, 'bird');
                 this.pipeTest = new Flappy.PipeSet(this.game, 700, 700, pipeGapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
-                this.game.physics.enable([this.bird], Phaser.Physics.ARCADE);
                 this.game.camera.follow(this.bird);
             }
             update() {
+                this.game.physics.arcade.collide(this.bird, this.floor, () => {
+                    console.log('collide');
+                    this.hitSound.play();
+                });
             }
         }
         State.Play = Play;

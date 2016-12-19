@@ -3,7 +3,9 @@ namespace Flappy {
 
         constructor(game: Phaser.Game, height: number, key: string) {
             super(game, 0, window.innerHeight, window.innerWidth, height, key);
-
+            this.game.physics.enable(this, Phaser.Physics.ARCADE);
+            this.body.immovable = true;
+            this.body.allowGravity = false;
             this.game.add.existing(this);
         }
 
