@@ -16,6 +16,9 @@
         ],
         "no-namespace": [
             false
+        ],
+        "max-line-length": [
+            false
         ]
     }
 }
