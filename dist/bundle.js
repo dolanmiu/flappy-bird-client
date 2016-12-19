@@ -30,12 +30,13 @@ var Flappy;
 var Flappy;
 (function (Flappy) {
     class Floor extends Phaser.TileSprite {
-        constructor(game, width, height, key) {
-            super(game, 0, window.innerHeight, width, height, key);
+        constructor(game, height, key) {
+            super(game, 0, window.innerHeight, window.innerWidth, height, key);
             this.game.add.existing(this);
         }
         update() {
             this.y = window.innerHeight / 3 * 2;
+            this.width = window.innerWidth;
             this.tilePosition.x -= 0.2;
         }
     }
@@ -103,13 +104,14 @@ var Flappy;
 var Flappy;
 (function (Flappy) {
     class Sky extends Phaser.TileSprite {
-        constructor(game, width, height, key) {
-            super(game, 0, window.innerHeight, width, height, key);
+        constructor(game, height, key) {
+            super(game, 0, window.innerHeight, window.innerWidth, height, key);
             this.anchor.y = 1;
             this.game.add.existing(this);
         }
         update() {
             this.y = window.innerHeight / 3 * 2;
+            this.width = window.innerWidth;
             this.tilePosition.x -= 0.1;
         }
     }
@@ -128,12 +130,13 @@ var Flappy;
                 this.game.load.image('pipeBody', 'assets/pipe.png');
                 this.game.load.image('pipeDownCap', 'assets/pipe-down.png');
                 this.game.load.image('pipeUpCap', 'assets/pipe-up.png');
+                this.game.stage.disableVisibilityChange = true;
             }
             create() {
                 this.game.physics.startSystem(Phaser.Physics.ARCADE);
                 this.game.physics.arcade.gravity.y = 100;
-                this.sky = new Flappy.Sky(this.game, window.innerWidth, 109, 'sky');
-                this.floor = new Flappy.Floor(this.game, window.innerWidth, 112, 'floor');
+                this.sky = new Flappy.Sky(this.game, 109, 'sky');
+                this.floor = new Flappy.Floor(this.game, 112, 'floor');
                 this.bird = new Flappy.Bird(this.game, 100, 100, 'bird');
                 this.pipeTest = new Flappy.PipeSet(this.game, 700, 700, pipeGapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
                 this.game.physics.enable([this.bird], Phaser.Physics.ARCADE);

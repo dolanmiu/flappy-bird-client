@@ -15,14 +15,15 @@ namespace Flappy.State {
             this.game.load.image('pipeBody', 'assets/pipe.png');
             this.game.load.image('pipeDownCap', 'assets/pipe-down.png');
             this.game.load.image('pipeUpCap', 'assets/pipe-up.png');
+            this.game.stage.disableVisibilityChange = true;
         }
 
         public create(): void {
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
             this.game.physics.arcade.gravity.y = 100;
 
-            this.sky = new Sky(this.game, window.innerWidth, 109, 'sky');
-            this.floor = new Floor(this.game, window.innerWidth, 112, 'floor');
+            this.sky = new Sky(this.game, 109, 'sky');
+            this.floor = new Floor(this.game, 112, 'floor');
             this.bird = new Bird(this.game, 100, 100, 'bird');
             this.pipeTest = new PipeSet(this.game, 700, 700, pipeGapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
             this.game.physics.enable([this.bird], Phaser.Physics.ARCADE);
