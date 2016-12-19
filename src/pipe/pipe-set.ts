@@ -8,7 +8,6 @@ namespace Flappy {
 
             this.add(upPipe);
             this.add(downPipe);
-            //this.game.add.existing(this);
         }
 
         public update(): void {

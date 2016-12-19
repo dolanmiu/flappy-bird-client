@@ -23,7 +23,7 @@ namespace Flappy {
         }
 
         public update(): void {
-            console.log(this.body.velocity.y);
+            // console.log(this.body.velocity.y);
             this.angle = this.calculateAngle(this.body.velocity.y);
         }
 

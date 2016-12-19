@@ -15,7 +15,7 @@ var Flappy;
             });
         }
         update() {
-            console.log(this.body.velocity.y);
+            // console.log(this.body.velocity.y);
             this.angle = this.calculateAngle(this.body.velocity.y);
         }
         calculateAngle(speed) {
@@ -30,12 +30,12 @@ var Flappy;
 var Flappy;
 (function (Flappy) {
     class Floor extends Phaser.TileSprite {
-        constructor(game, x, y, width, height, key) {
-            super(game, x, y, width, height, key);
-            this.anchor.y = 1;
+        constructor(game, width, height, key) {
+            super(game, 0, window.innerHeight, width, height, key);
             this.game.add.existing(this);
         }
         update() {
+            this.y = window.innerHeight / 3 * 2;
             this.tilePosition.x -= 0.2;
         }
     }
@@ -46,7 +46,10 @@ var Flappy;
     class Game extends Phaser.Game {
         constructor(elementName) {
             let element = document.getElementById(elementName);
-            super(window.innerWidth, 800, Phaser.AUTO, element.id, Flappy.State.Play, true, true);
+            super(window.innerWidth, 800, Phaser.AUTO, element.id, Flappy.State.Play, true, false);
+            window.addEventListener('resize', (myFunction) => {
+                this.scale.setGameSize(window.innerWidth, window.innerHeight);
+            });
         }
     }
     Flappy.Game = Game;
@@ -75,7 +78,6 @@ var Flappy;
             let downPipe = new Flappy.DownPipe(game, x, y, pipeBodyKey, pipeDownCapKey);
             this.add(upPipe);
             this.add(downPipe);
-            //this.game.add.existing(this);
         }
         update() {
             this.x -= 1;
@@ -101,12 +103,13 @@ var Flappy;
 var Flappy;
 (function (Flappy) {
     class Sky extends Phaser.TileSprite {
-        constructor(game, x, y, width, height, key) {
-            super(game, x, y, width, height, key);
+        constructor(game, width, height, key) {
+            super(game, 0, window.innerHeight, width, height, key);
             this.anchor.y = 1;
             this.game.add.existing(this);
         }
         update() {
+            this.y = window.innerHeight / 3 * 2;
             this.tilePosition.x -= 0.1;
         }
     }
@@ -129,16 +132,14 @@ var Flappy;
             create() {
                 this.game.physics.startSystem(Phaser.Physics.ARCADE);
                 this.game.physics.arcade.gravity.y = 100;
-                this.sky = new Flappy.Sky(this.game, 0, window.innerHeight - 112, window.innerWidth, 109, 'sky');
-                this.floor = new Flappy.Floor(this.game, 0, window.innerHeight, window.innerWidth, 112, 'floor');
+                this.sky = new Flappy.Sky(this.game, window.innerWidth, 109, 'sky');
+                this.floor = new Flappy.Floor(this.game, window.innerWidth, 112, 'floor');
                 this.bird = new Flappy.Bird(this.game, 100, 100, 'bird');
                 this.pipeTest = new Flappy.PipeSet(this.game, 700, 700, pipeGapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
                 this.game.physics.enable([this.bird], Phaser.Physics.ARCADE);
                 this.game.camera.follow(this.bird);
             }
             update() {
-                this.sky.update();
-                this.pipeTest.update();
             }
         }
         State.Play = Play;

@@ -6,10 +6,30 @@
         body {
             margin: 0;
         }
+        
+        #sky-fill {
+            position: fixed;
+            background-color: #4ec0ca;
+            top: 0;
+            height: 67%;
+            width: 100%;
+            z-index: -1;
+        }
+        
+        #floor-fill {
+            position: fixed;
+            background-color: #ded895;
+            bottom: 0;
+            height: 33%;
+            width: 100%;
+            z-index: -1;
+        }
     </style>
 </head>
 
 <body>
+    <div id="sky-fill"></div>
+    <div id="floor-fill"></div>
     <div id="game" style="height: 100%"></div>
     <script>
         var game = new Flappy.Game("game");
