@@ -29,6 +29,13 @@ var Flappy;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
+    class Constants {
+    }
+    Constants.gameSpeed = 0.1;
+    Flappy.Constants = Constants;
+})(Flappy || (Flappy = {}));
+var Flappy;
+(function (Flappy) {
     class Floor extends Phaser.TileSprite {
         constructor(game, height, key) {
             super(game, 0, window.innerHeight, window.innerWidth, height, key);
@@ -37,7 +44,7 @@ var Flappy;
         update() {
             this.y = window.innerHeight / 3 * 2;
             this.width = window.innerWidth;
-            this.tilePosition.x -= 0.2;
+            this.tilePosition.x -= this.game.time.elapsed * Flappy.Constants.gameSpeed;
         }
     }
     Flappy.Floor = Floor;
@@ -60,12 +67,15 @@ var Flappy;
     class DownPipe extends Phaser.Group {
         constructor(game, x, y, pipeBodyKey, pipeCapKey) {
             super(game);
-            let pipeBody = new Phaser.TileSprite(game, x, y, 52, window.innerHeight, pipeBodyKey);
-            pipeBody.anchor.y = 1;
+            this.pipeBody = new Phaser.TileSprite(game, x, y, 52, window.innerHeight, pipeBodyKey);
+            this.pipeBody.anchor.y = 1;
             let pipeCap = new Phaser.Sprite(game, x, y, pipeCapKey);
-            this.add(pipeBody);
+            this.add(this.pipeBody);
             this.add(pipeCap);
             this.game.add.existing(this);
+        }
+        update() {
+            this.pipeBody.height = window.innerHeight;
         }
     }
     Flappy.DownPipe = DownPipe;
@@ -81,7 +91,7 @@ var Flappy;
             this.add(downPipe);
         }
         update() {
-            this.x -= 1;
+            this.x -= this.game.time.elapsed * Flappy.Constants.gameSpeed;
         }
     }
     Flappy.PipeSet = PipeSet;
@@ -91,12 +101,15 @@ var Flappy;
     class UpPipe extends Phaser.Group {
         constructor(game, x, y, pipeBodyKey, pipeCapKey) {
             super(game);
-            let pipeBody = new Phaser.TileSprite(game, x, y, 52, window.innerHeight, pipeBodyKey);
+            this.pipeBody = new Phaser.TileSprite(game, x, y, 52, window.innerHeight, pipeBodyKey);
             let pipeCap = new Phaser.Sprite(game, x, y, pipeCapKey);
             pipeCap.anchor.y = 1;
-            this.add(pipeBody);
+            this.add(this.pipeBody);
             this.add(pipeCap);
             this.game.add.existing(this);
+        }
+        update() {
+            this.pipeBody.height = window.innerHeight;
         }
     }
     Flappy.UpPipe = UpPipe;

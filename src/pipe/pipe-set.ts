@@ -11,7 +11,7 @@ namespace Flappy {
         }
 
         public update(): void {
-            this.x -= 1;
+            this.x -= this.game.time.elapsed * Constants.gameSpeed;
         }
     }
 }

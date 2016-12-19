@@ -10,7 +10,7 @@ namespace Flappy {
         public update(): void {
             this.y = window.innerHeight / 3 * 2;
             this.width = window.innerWidth;
-            this.tilePosition.x -= 0.2;
+            this.tilePosition.x -= this.game.time.elapsed * Constants.gameSpeed;
         }
     }
 }
