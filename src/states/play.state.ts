@@ -1,5 +1,4 @@
 namespace Flappy.State {
-    const pipeGapSize = 100;
 
     export class Play extends Phaser.State {
 
@@ -29,17 +28,20 @@ namespace Flappy.State {
             this.game.physics.arcade.gravity.y = 100;
 
             this.sky = new Sky(this.game, 109, 'sky');
+            this.pipeTest = new PipeSet(this.game, 700, 700, Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
             this.floor = new Floor(this.game, 112, 'floor');
             this.bird = new Bird(this.game, 100, 100, 'bird');
-            this.pipeTest = new PipeSet(this.game, 700, 700, pipeGapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
-            this.game.camera.follow(this.bird);
+            // this.game.camera.follow(this.bird);
         }
 
         public update(): void {
             this.game.physics.arcade.collide(this.bird, this.floor, () => {
-                console.log('collide');
                 this.hitSound.play();
             });
+
+            /*this.game.physics.arcade.collide(this.bird, this.floor, () => {
+                this.hitSound.play();
+            });*/
         }
     }
 }

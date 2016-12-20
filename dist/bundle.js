@@ -35,6 +35,7 @@ var Flappy;
     class Constants {
     }
     Constants.gameSpeed = 0.1;
+    Constants.gapSize = 200;
     Flappy.Constants = Constants;
 })(Flappy || (Flappy = {}));
 var Flappy;
@@ -92,6 +93,33 @@ var Flappy;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
+    class PipePool extends Phaser.Group {
+        constructor(game) {
+            super(game);
+            this.game = game;
+            for (let i = 0; i < 1; i++) {
+                this.add(new Flappy.PipeSet(game, 1000, 400, Flappy.Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap')); // Add new sprite
+            }
+        }
+        create(x, y) {
+            // Find the first child that has a false exist property:
+            let obj = this.getFirstExists(false);
+            if (!obj) {
+                // We failed to find an availble child, so we create one now and add it to the pool.
+                obj = new Flappy.PipeSet(this.game, x, y, Flappy.Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
+                this.add(obj, true);
+            }
+            //  We call the childs spawn method and return the object to whatever triggered this.
+            //  The spawn method will handle stuff like position, resetting the health property
+            //  and setting exists to true. The spawned object will live even if the returned
+            //  reference is ignored
+            return obj.spawn(x, y);
+        }
+    }
+    Flappy.PipePool = PipePool;
+})(Flappy || (Flappy = {}));
+var Flappy;
+(function (Flappy) {
     class PipeSet extends Phaser.Group {
         constructor(game, x, y, gapSize, pipeBodyKey, pipeDownCapKey, pipeUpCapKey) {
             super(game);
@@ -144,7 +172,6 @@ var Flappy;
 (function (Flappy) {
     var State;
     (function (State) {
-        const pipeGapSize = 100;
         class Play extends Phaser.State {
             preload() {
                 this.game.load.spritesheet('bird', 'assets/bird.png', 34, 24);
@@ -162,16 +189,18 @@ var Flappy;
                 this.game.physics.startSystem(Phaser.Physics.ARCADE);
                 this.game.physics.arcade.gravity.y = 100;
                 this.sky = new Flappy.Sky(this.game, 109, 'sky');
+                this.pipeTest = new Flappy.PipeSet(this.game, 700, 700, Flappy.Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
                 this.floor = new Flappy.Floor(this.game, 112, 'floor');
                 this.bird = new Flappy.Bird(this.game, 100, 100, 'bird');
-                this.pipeTest = new Flappy.PipeSet(this.game, 700, 700, pipeGapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
-                this.game.camera.follow(this.bird);
+                // this.game.camera.follow(this.bird);
             }
             update() {
                 this.game.physics.arcade.collide(this.bird, this.floor, () => {
-                    console.log('collide');
                     this.hitSound.play();
                 });
+                /*this.game.physics.arcade.collide(this.bird, this.floor, () => {
+                    this.hitSound.play();
+                });*/
             }
         }
         State.Play = Play;
