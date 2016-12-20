@@ -6,6 +6,7 @@ namespace Flappy.State {
         private sky: Sky;
         private floor: Floor;
         private pipeTest: PipeSet;
+        private pipePool: PipePool;
 
         private hitSound: Phaser.Sound;
 
@@ -28,7 +29,9 @@ namespace Flappy.State {
             this.game.physics.arcade.gravity.y = 100;
 
             this.sky = new Sky(this.game, 109, 'sky');
-            this.pipeTest = new PipeSet(this.game, 700, 700, Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
+            this.pipePool = new PipePool(this.game);
+            this.pipePool.create(100, 100);
+            // this.pipeTest = new PipeSet(this.game, 700, 700, Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
             this.floor = new Floor(this.game, 112, 'floor');
             this.bird = new Bird(this.game, 100, 100, 'bird');
             // this.game.camera.follow(this.bird);

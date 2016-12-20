@@ -1,17 +1,24 @@
 namespace Flappy {
     export class PipeSet extends Phaser.Group {
+        private downPipe: DownPipe;
+        private upPipe: UpPipe;
 
         constructor(game: Phaser.Game, x: number, y: number, gapSize: number, pipeBodyKey: string, pipeDownCapKey: string, pipeUpCapKey: string) {
             super(game);
-            let upPipe = new UpPipe(game, x, y + gapSize, pipeBodyKey, pipeUpCapKey);
-            let downPipe = new DownPipe(game, x, y, pipeBodyKey, pipeDownCapKey);
+            this.upPipe = new UpPipe(game, x, y + gapSize, pipeBodyKey, pipeUpCapKey);
+            this.downPipe = new DownPipe(game, x, y, pipeBodyKey, pipeDownCapKey);
 
-            this.add(upPipe);
-            this.add(downPipe);
+            this.add(this.upPipe);
+            this.add(this.downPipe);
         }
 
         public update(): void {
             this.x -= this.game.time.elapsed * Constants.gameSpeed;
+            this.upPipe.update();
+        }
+
+        public spawn(): void {
+
         }
     }
 }

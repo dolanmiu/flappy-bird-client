@@ -86,7 +86,6 @@ var Flappy;
             this.game.add.existing(this);
         }
         update() {
-            this.pipeBody.height = window.innerHeight;
         }
     }
     Flappy.DownPipe = DownPipe;
@@ -123,13 +122,16 @@ var Flappy;
     class PipeSet extends Phaser.Group {
         constructor(game, x, y, gapSize, pipeBodyKey, pipeDownCapKey, pipeUpCapKey) {
             super(game);
-            let upPipe = new Flappy.UpPipe(game, x, y + gapSize, pipeBodyKey, pipeUpCapKey);
-            let downPipe = new Flappy.DownPipe(game, x, y, pipeBodyKey, pipeDownCapKey);
-            this.add(upPipe);
-            this.add(downPipe);
+            this.upPipe = new Flappy.UpPipe(game, x, y + gapSize, pipeBodyKey, pipeUpCapKey);
+            this.downPipe = new Flappy.DownPipe(game, x, y, pipeBodyKey, pipeDownCapKey);
+            this.add(this.upPipe);
+            this.add(this.downPipe);
         }
         update() {
             this.x -= this.game.time.elapsed * Flappy.Constants.gameSpeed;
+            this.upPipe.update();
+        }
+        spawn() {
         }
     }
     Flappy.PipeSet = PipeSet;
@@ -147,7 +149,7 @@ var Flappy;
             this.game.add.existing(this);
         }
         update() {
-            this.pipeBody.height = window.innerHeight;
+            this.pipeBody.height = (window.innerHeight / 3 * 2) - this.pipeBody.y;
         }
     }
     Flappy.UpPipe = UpPipe;
@@ -189,7 +191,9 @@ var Flappy;
                 this.game.physics.startSystem(Phaser.Physics.ARCADE);
                 this.game.physics.arcade.gravity.y = 100;
                 this.sky = new Flappy.Sky(this.game, 109, 'sky');
-                this.pipeTest = new Flappy.PipeSet(this.game, 700, 700, Flappy.Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
+                this.pipePool = new Flappy.PipePool(this.game);
+                this.pipePool.create(100, 100);
+                // this.pipeTest = new PipeSet(this.game, 700, 700, Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
                 this.floor = new Flappy.Floor(this.game, 112, 'floor');
                 this.bird = new Flappy.Bird(this.game, 100, 100, 'bird');
                 // this.game.camera.follow(this.bird);

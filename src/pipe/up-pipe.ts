@@ -14,7 +14,7 @@ namespace Flappy {
         }
 
         public update(): void {
-            this.pipeBody.height = window.innerHeight;
+            this.pipeBody.height = (window.innerHeight / 3 * 2) - this.pipeBody.y;
         }
     }
 }
