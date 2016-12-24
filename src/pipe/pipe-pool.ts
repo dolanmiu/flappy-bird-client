@@ -5,7 +5,7 @@ namespace Flappy {
             this.game = game;
 
             for (let i = 0; i < 1; i++) {
-                this.add(new PipeSet(game, 1000, 400, Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap')); // Add new sprite
+                this.add(new PipeSet(game, 1000, 0.4, Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap')); // Add new sprite
             }
         }
 

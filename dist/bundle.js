@@ -20,6 +20,7 @@ var Flappy;
         update() {
             // console.log(this.body.velocity.y);
             this.angle = this.calculateAngle(this.body.velocity.y);
+            this.x += this.game.time.elapsed * Flappy.Constants.gameSpeed;
         }
         calculateAngle(speed) {
             if (speed >= 90) {
@@ -50,8 +51,9 @@ var Flappy;
         }
         update() {
             this.y = window.innerHeight / 3 * 2;
-            this.width = window.innerWidth;
-            this.tilePosition.x -= this.game.time.elapsed * Flappy.Constants.gameSpeed;
+            this.width = this.game.world.width;
+            this.body.width = this.game.world.width;
+            // this.tilePosition.x -= this.game.time.elapsed * Constants.gameSpeed;
         }
     }
     Flappy.Floor = Floor;
@@ -97,7 +99,7 @@ var Flappy;
             super(game);
             this.game = game;
             for (let i = 0; i < 1; i++) {
-                this.add(new Flappy.PipeSet(game, 1000, 400, Flappy.Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap')); // Add new sprite
+                this.add(new Flappy.PipeSet(game, 1000, 0.4, Flappy.Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap')); // Add new sprite
             }
         }
         create(x, y) {
@@ -120,8 +122,9 @@ var Flappy;
 var Flappy;
 (function (Flappy) {
     class PipeSet extends Phaser.Group {
-        constructor(game, x, y, gapSize, pipeBodyKey, pipeDownCapKey, pipeUpCapKey) {
+        constructor(game, x, yRatio, gapSize, pipeBodyKey, pipeDownCapKey, pipeUpCapKey) {
             super(game);
+            let y = (window.innerHeight / 3) + (window.innerHeight / 3) * yRatio;
             this.upPipe = new Flappy.UpPipe(game, x, y + gapSize, pipeBodyKey, pipeUpCapKey);
             this.downPipe = new Flappy.DownPipe(game, x, y, pipeBodyKey, pipeDownCapKey);
             this.add(this.upPipe);
@@ -158,14 +161,15 @@ var Flappy;
 (function (Flappy) {
     class Sky extends Phaser.TileSprite {
         constructor(game, height, key) {
-            super(game, 0, window.innerHeight, window.innerWidth, height, key);
+            super(game, 0, window.innerHeight / 3 * 2, window.innerWidth, height, key);
+            this.fixedToCamera = true;
             this.anchor.y = 1;
             this.game.add.existing(this);
         }
         update() {
             this.y = window.innerHeight / 3 * 2;
             this.width = window.innerWidth;
-            this.tilePosition.x -= 0.1;
+            //this.tilePosition.x -= 0.1;
         }
     }
     Flappy.Sky = Sky;
@@ -188,6 +192,7 @@ var Flappy;
             }
             create() {
                 this.hitSound = this.game.add.audio('hit');
+                this.game.world.setBounds(0, 0, 3000, 1920);
                 this.game.physics.startSystem(Phaser.Physics.ARCADE);
                 this.game.physics.arcade.gravity.y = 100;
                 this.sky = new Flappy.Sky(this.game, 109, 'sky');
@@ -196,7 +201,8 @@ var Flappy;
                 // this.pipeTest = new PipeSet(this.game, 700, 700, Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
                 this.floor = new Flappy.Floor(this.game, 112, 'floor');
                 this.bird = new Flappy.Bird(this.game, 100, 100, 'bird');
-                // this.game.camera.follow(this.bird);
+                this.game.camera.focusOnXY(this.bird.x, 100);
+                this.game.camera.follow(this.bird);
             }
             update() {
                 this.game.physics.arcade.collide(this.bird, this.floor, () => {

@@ -2,8 +2,9 @@ namespace Flappy {
     export class Sky extends Phaser.TileSprite {
 
         constructor(game: Phaser.Game, height: number, key: string) {
-            super(game, 0, window.innerHeight, window.innerWidth, height, key);
-
+            super(game, 0, window.innerHeight / 3 * 2, window.innerWidth, height, key);
+            
+            this.fixedToCamera = true;
             this.anchor.y = 1;
             this.game.add.existing(this);
         }
@@ -11,7 +12,7 @@ namespace Flappy {
         public update(): void {
             this.y = window.innerHeight / 3 * 2;
             this.width = window.innerWidth;
-            this.tilePosition.x -= 0.1;
+            //this.tilePosition.x -= 0.1;
         }
     }
 }

@@ -28,6 +28,7 @@ namespace Flappy {
         public update(): void {
             // console.log(this.body.velocity.y);
             this.angle = this.calculateAngle(this.body.velocity.y);
+            this.x += this.game.time.elapsed * Constants.gameSpeed;
         }
 
         private calculateAngle(speed: number): number {
