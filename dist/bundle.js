@@ -37,6 +37,7 @@ var Flappy;
     }
     Constants.gameSpeed = 0.1;
     Constants.gapSize = 200;
+    Constants.serverUrl = 'http://localhost:9001';
     Flappy.Constants = Constants;
 })(Flappy || (Flappy = {}));
 var Flappy;
@@ -98,8 +99,11 @@ var Flappy;
         constructor(game) {
             super(game);
             this.game = game;
-            for (let i = 0; i < 1; i++) {
-                this.add(new Flappy.PipeSet(game, 1000, 0.4, Flappy.Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap')); // Add new sprite
+        }
+        addPipes(pipes) {
+            for (let pipe of pipes) {
+                console.log(pipe);
+                this.create(pipe.index * Flappy.Constants.gapSize, pipe.location);
             }
         }
         create(x, y) {
@@ -131,7 +135,6 @@ var Flappy;
             this.add(this.downPipe);
         }
         update() {
-            this.x -= this.game.time.elapsed * Flappy.Constants.gameSpeed;
             this.upPipe.update();
         }
         spawn() {
@@ -203,10 +206,13 @@ var Flappy;
                 this.bird = new Flappy.Bird(this.game, 100, 100, 'bird');
                 this.game.camera.focusOnXY(this.bird.x, 100);
                 this.game.camera.follow(this.bird);
+                $.get(`${Flappy.Constants.serverUrl}/stage?start=2&end=8`, (data) => {
+                    this.pipePool.addPipes(data);
+                });
             }
             update() {
                 this.game.physics.arcade.collide(this.bird, this.floor, () => {
-                    this.hitSound.play();
+                    // this.hitSound.play();
                 });
                 /*this.game.physics.arcade.collide(this.bird, this.floor, () => {
                     this.hitSound.play();

@@ -19,6 +19,9 @@
         ],
         "max-line-length": [
             false
+        ],
+        "array-type": [
+            "generic"
         ]
     }
 }

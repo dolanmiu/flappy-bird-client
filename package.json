@@ -1,35 +1,35 @@
 {
-    "name": "flappy-bird-client",
-    "version": "1.0.0",
-    "description": "A flappy bird client for the Flappy Bird MMO",
-    "main": "dist/index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "webpack": "webpack --config config/webpack.config.js",
-        "tsc": "tsc -p .",
-        "prestart": "npm run tsc",
-        "start": "live-server --watch=dist",
-        "postinstall": "typings install"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/dolanmiu/flappy-bird-client.git"
-    },
-    "author": "Dolan Miu",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/dolanmiu/flappy-bird-client/issues"
-    },
-    "homepage": "https://github.com/dolanmiu/flappy-bird-client#readme",
-    "dependencies": {
-        "phaser": "^2.6.2"
-    },
-    "devDependencies": {
-        "awesome-typescript-loader": "^3.0.0-beta.17",
-        "live-server": "^1.1.0",
-        "tslint": "^4.1.1",
-        "typescript": "^2.1.4",
-        "typings": "^2.0.0",
-        "webpack": "^1.14.0"
-    }
+  "name": "flappy-bird-client",
+  "version": "1.0.0",
+  "description": "A flappy bird client for the Flappy Bird MMO",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "webpack": "webpack --config config/webpack.config.js",
+    "tsc": "tsc -p .",
+    "prestart": "npm run tsc",
+    "start": "live-server --watch=dist",
+    "postinstall": "typings install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dolanmiu/flappy-bird-client.git"
+  },
+  "author": "Dolan Miu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dolanmiu/flappy-bird-client/issues"
+  },
+  "homepage": "https://github.com/dolanmiu/flappy-bird-client#readme",
+  "dependencies": {
+    "phaser": "^2.6.2"
+  },
+  "devDependencies": {
+    "awesome-typescript-loader": "^3.0.0-beta.17",
+    "live-server": "^1.1.0",
+    "tslint": "^4.1.1",
+    "typescript": "^2.1.4",
+    "typings": "^2.0.0",
+    "webpack": "^1.14.0"
+  }
 }

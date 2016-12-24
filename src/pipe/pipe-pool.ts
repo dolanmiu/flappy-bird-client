@@ -1,11 +1,19 @@
 namespace Flappy {
+    interface IPipe {
+        index: number;
+        location: number;
+    }
+
     export class PipePool extends Phaser.Group {
         constructor(game: Phaser.Game) {
             super(game);
             this.game = game;
+        }
 
-            for (let i = 0; i < 1; i++) {
-                this.add(new PipeSet(game, 1000, 0.4, Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap')); // Add new sprite
+        public addPipes(pipes: Array<IPipe>): void {
+            for (let pipe of pipes) {
+                console.log(pipe);
+                this.create(pipe.index * Flappy.Constants.gapSize, pipe.location);
             }
         }
 

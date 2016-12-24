@@ -14,7 +14,6 @@ namespace Flappy {
         }
 
         public update(): void {
-            this.x -= this.game.time.elapsed * Constants.gameSpeed;
             this.upPipe.update();
         }
 
