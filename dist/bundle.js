@@ -34,24 +34,30 @@ var Flappy;
 var Flappy;
 (function (Flappy) {
     class Constants {
+        static get gameWidth() {
+            let ratio = this.gameHeight / window.innerHeight;
+            return window.innerWidth * ratio;
+        }
     }
     Constants.gameSpeed = 0.1;
     Constants.gapSize = 200;
     Constants.serverUrl = 'http://localhost:9001';
+    Constants.gameHeight = 665;
     Flappy.Constants = Constants;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
     class Floor extends Phaser.TileSprite {
         constructor(game, height, key) {
-            super(game, 0, window.innerHeight, window.innerWidth, height, key);
+            super(game, 0, Flappy.Constants.gameHeight, window.innerWidth, height, key);
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.body.immovable = true;
             this.body.allowGravity = false;
+            this.anchor.y = 1;
             this.game.add.existing(this);
         }
         update() {
-            this.y = window.innerHeight / 3 * 2;
+            // this.y = window.innerHeight / 3 * 2;
             this.width = this.game.world.width;
             this.body.width = this.game.world.width;
             // this.tilePosition.x -= this.game.time.elapsed * Constants.gameSpeed;
@@ -64,9 +70,9 @@ var Flappy;
     class Game extends Phaser.Game {
         constructor(elementName) {
             let element = document.getElementById(elementName);
-            super(window.innerWidth, window.innerHeight, Phaser.AUTO, element.id, Flappy.State.Play, true, false);
+            super(Flappy.Constants.gameWidth, Flappy.Constants.gameHeight, Phaser.AUTO, element.id, Flappy.State.Play, false, false);
             window.addEventListener('resize', (myFunction) => {
-                this.scale.setGameSize(window.innerWidth, window.innerHeight);
+                this.scale.setGameSize(Flappy.Constants.gameWidth, Flappy.Constants.gameHeight);
             });
         }
     }
@@ -194,8 +200,9 @@ var Flappy;
                 this.game.stage.disableVisibilityChange = true;
             }
             create() {
+                this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
                 this.hitSound = this.game.add.audio('hit');
-                this.game.world.setBounds(0, 0, 3000, 1920);
+                this.game.world.setBounds(0, 0, 3000, Flappy.Constants.gameHeight);
                 this.game.physics.startSystem(Phaser.Physics.ARCADE);
                 this.game.physics.arcade.gravity.y = 100;
                 this.sky = new Flappy.Sky(this.game, 109, 'sky');

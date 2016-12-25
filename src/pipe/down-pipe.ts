@@ -19,9 +19,5 @@ namespace Flappy {
 
             this.game.add.existing(this);
         }
-
-        public update(): void {
-
-        }
     }
 }

@@ -16,9 +16,5 @@ namespace Flappy {
         public update(): void {
             this.upPipe.update();
         }
-
-        public spawn(): void {
-
-        }
     }
 }

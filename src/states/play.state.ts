@@ -23,8 +23,10 @@ namespace Flappy.State {
         }
 
         public create(): void {
+            this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+
             this.hitSound = this.game.add.audio('hit');
-            this.game.world.setBounds(0, 0, 3000, 1920);
+            this.game.world.setBounds(0, 0, 3000, Flappy.Constants.gameHeight);
 
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
             this.game.physics.arcade.gravity.y = 100;
@@ -46,7 +48,7 @@ namespace Flappy.State {
 
         public update(): void {
             this.game.physics.arcade.collide(this.bird, this.floor, () => {
-                this.hitSound.play();
+                // this.hitSound.play();
             });
 
             /*this.game.physics.arcade.collide(this.bird, this.floor, () => {

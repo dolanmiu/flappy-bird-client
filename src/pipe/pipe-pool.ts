@@ -12,7 +12,6 @@ namespace Flappy {
 
         public addPipes(pipes: Array<IPipe>): void {
             for (let pipe of pipes) {
-                console.log(pipe);
                 this.create(pipe.index * Flappy.Constants.gapSize, pipe.location);
             }
         }

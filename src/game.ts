@@ -3,9 +3,9 @@ namespace Flappy {
         constructor(elementName: string) {
             let element = document.getElementById(elementName);
 
-            super(window.innerWidth, window.innerHeight, Phaser.AUTO, element.id, Flappy.State.Play, true, false);
+            super(Flappy.Constants.gameWidth, Flappy.Constants.gameHeight, Phaser.AUTO, element.id, Flappy.State.Play, false, false);
             window.addEventListener('resize', (myFunction) => {
-                this.scale.setGameSize(window.innerWidth, window.innerHeight);
+                this.scale.setGameSize(Flappy.Constants.gameWidth, Flappy.Constants.gameHeight);
             });
         }
     }
