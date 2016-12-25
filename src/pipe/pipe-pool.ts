@@ -8,6 +8,8 @@ namespace Flappy {
         constructor(game: Phaser.Game, private floorHeight: number) {
             super(game);
             this.game = game;
+            this.game.physics.enable(this, Phaser.Physics.ARCADE);
+
         }
 
         public addPipes(pipes: Array<IPipe>): void {

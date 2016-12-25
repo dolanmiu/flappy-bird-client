@@ -10,11 +10,13 @@ namespace Flappy {
 
             this.add(this.pipeBody);
             this.add(pipeCap);
-            this.game.add.existing(this);
-        }
 
-        public update(): void {
-            this.pipeBody.height = (window.innerHeight / 3 * 2) - this.pipeBody.y;
+            this.game.physics.enable(this.pipeBody, Phaser.Physics.ARCADE);
+            this.game.physics.enable(pipeCap, Phaser.Physics.ARCADE);
+            this.pipeBody.body.allowGravity = false;
+            pipeCap.body.allowGravity = false;
+
+            this.game.add.existing(this);
         }
     }
 }

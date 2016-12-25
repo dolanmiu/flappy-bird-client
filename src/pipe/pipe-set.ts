@@ -11,9 +11,5 @@ namespace Flappy {
             this.add(this.upPipe);
             this.add(this.downPipe);
         }
-
-        public update(): void {
-            this.upPipe.update();
-        }
     }
 }

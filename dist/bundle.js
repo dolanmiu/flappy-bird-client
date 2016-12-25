@@ -85,13 +85,13 @@ var Flappy;
         constructor(game, x, y, pipeBodyKey, pipeCapKey) {
             super(game);
             this.pipeBody = new Phaser.TileSprite(game, x, y, 52, window.innerHeight, pipeBodyKey);
-            this.pipeBody.anchor.y = 1;
             let pipeCap = new Phaser.Sprite(game, x, y, pipeCapKey);
+            this.pipeBody.anchor.y = 1;
             this.add(this.pipeBody);
             this.add(pipeCap);
             this.game.physics.enable(this.pipeBody, Phaser.Physics.ARCADE);
-            this.pipeBody.body.allowGravity = false;
             this.game.physics.enable(pipeCap, Phaser.Physics.ARCADE);
+            this.pipeBody.body.allowGravity = false;
             pipeCap.body.allowGravity = false;
             this.game.add.existing(this);
         }
@@ -105,6 +105,7 @@ var Flappy;
             super(game);
             this.floorHeight = floorHeight;
             this.game = game;
+            this.game.physics.enable(this, Phaser.Physics.ARCADE);
         }
         addPipes(pipes) {
             for (let pipe of pipes) {
@@ -158,10 +159,14 @@ var Flappy;
             pipeCap.anchor.y = 1;
             this.add(this.pipeBody);
             this.add(pipeCap);
+            this.game.physics.enable(this.pipeBody, Phaser.Physics.ARCADE);
+            this.game.physics.enable(pipeCap, Phaser.Physics.ARCADE);
+            this.pipeBody.body.allowGravity = false;
+            pipeCap.body.allowGravity = false;
             this.game.add.existing(this);
         }
         update() {
-            this.pipeBody.height = (window.innerHeight / 3 * 2) - this.pipeBody.y;
+            //this.pipeBody.height = (window.innerHeight / 3 * 2) - this.pipeBody.y;
         }
     }
     Flappy.UpPipe = UpPipe;
@@ -219,9 +224,10 @@ var Flappy;
                 this.game.physics.arcade.collide(this.bird, this.floor, () => {
                     // this.hitSound.play();
                 });
-                /*this.game.physics.arcade.collide(this.bird, this.floor, () => {
+                this.game.physics.arcade.collide(this.bird, this.pipePool, () => {
+                    console.log('hit pipes');
                     this.hitSound.play();
-                });*/
+                });
             }
         }
         State.Play = Play;
