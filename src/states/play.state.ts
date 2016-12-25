@@ -35,7 +35,7 @@ namespace Flappy.State {
 
             this.sky = new Sky(this.game, 109, 'sky', floorHeight);
 
-            this.pipePool = new PipePool(this.game);
+            this.pipePool = new PipePool(this.game, floorHeight);
             this.floor = new Floor(this.game, floorHeight, 'floor');
             this.bird = new Bird(this.game, 100, 100, 'bird');
             this.game.camera.follow(this.bird, Phaser.Camera.FOLLOW_PLATFORMER);

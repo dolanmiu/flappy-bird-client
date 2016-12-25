@@ -101,13 +101,16 @@ var Flappy;
 var Flappy;
 (function (Flappy) {
     class PipePool extends Phaser.Group {
-        constructor(game) {
+        constructor(game, floorHeight) {
             super(game);
+            this.floorHeight = floorHeight;
             this.game = game;
         }
         addPipes(pipes) {
             for (let pipe of pipes) {
-                this.create(pipe.index * Flappy.Constants.gapSize, pipe.location);
+                let availableHeight = Flappy.Constants.gameHeight - this.floorHeight - Flappy.Constants.gapSize;
+                let adjustedLocation = this.map(pipe.location, 0, 1, 0.1, 0.9);
+                this.create(pipe.index * Flappy.Constants.gapSize, pipe.location * availableHeight);
             }
         }
         create(x, y) {
@@ -123,15 +126,17 @@ var Flappy;
             //  and setting exists to true. The spawned object will live even if the returned
             //  reference is ignored
         }
+        map(input, inputMin, inputMax, outputMin, outputMax) {
+            return (input - inputMin) * (outputMax - outputMin) / (inputMax - inputMin) + outputMin;
+        }
     }
     Flappy.PipePool = PipePool;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
     class PipeSet extends Phaser.Group {
-        constructor(game, x, yRatio, gapSize, pipeBodyKey, pipeDownCapKey, pipeUpCapKey) {
+        constructor(game, x, y, gapSize, pipeBodyKey, pipeDownCapKey, pipeUpCapKey) {
             super(game);
-            let y = (window.innerHeight / 3) + (window.innerHeight / 3) * yRatio;
             this.upPipe = new Flappy.UpPipe(game, x, y + gapSize, pipeBodyKey, pipeUpCapKey);
             this.downPipe = new Flappy.DownPipe(game, x, y, pipeBodyKey, pipeDownCapKey);
             this.add(this.upPipe);
@@ -202,7 +207,7 @@ var Flappy;
                 this.game.physics.startSystem(Phaser.Physics.ARCADE);
                 this.game.physics.arcade.gravity.y = 100;
                 this.sky = new Flappy.Sky(this.game, 109, 'sky', floorHeight);
-                this.pipePool = new Flappy.PipePool(this.game);
+                this.pipePool = new Flappy.PipePool(this.game, floorHeight);
                 this.floor = new Flappy.Floor(this.game, floorHeight, 'floor');
                 this.bird = new Flappy.Bird(this.game, 100, 100, 'bird');
                 this.game.camera.follow(this.bird, Phaser.Camera.FOLLOW_PLATFORMER);

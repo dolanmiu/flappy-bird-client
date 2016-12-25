@@ -5,14 +5,16 @@ namespace Flappy {
     }
 
     export class PipePool extends Phaser.Group {
-        constructor(game: Phaser.Game) {
+        constructor(game: Phaser.Game, private floorHeight: number) {
             super(game);
             this.game = game;
         }
 
         public addPipes(pipes: Array<IPipe>): void {
             for (let pipe of pipes) {
-                this.create(pipe.index * Flappy.Constants.gapSize, pipe.location);
+                let availableHeight = Flappy.Constants.gameHeight - this.floorHeight - Flappy.Constants.gapSize;
+                let adjustedLocation = this.map(pipe.location, 0, 1, 0.1, 0.9);
+                this.create(pipe.index * Flappy.Constants.gapSize, pipe.location * availableHeight);
             }
         }
 
@@ -28,6 +30,10 @@ namespace Flappy {
             //  The spawn method will handle stuff like position, resetting the health property
             //  and setting exists to true. The spawned object will live even if the returned
             //  reference is ignored
+        }
+
+        private map(input: number, inputMin: number, inputMax: number, outputMin: number, outputMax: number): number {
+            return (input - inputMin) * (outputMax - outputMin) / (inputMax - inputMin) + outputMin;
         }
     }
 }
