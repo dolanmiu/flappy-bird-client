@@ -16,7 +16,7 @@ namespace Flappy {
             }
         }
 
-        public create(x: number, y: number) {
+        public create(x: number, y: number): void {
             // Find the first child that has a false exist property:
             let obj = this.getFirstExists(false);
             if (!obj) {

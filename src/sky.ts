@@ -10,9 +10,8 @@ namespace Flappy {
         }
 
         public update(): void {
-            console.log('updating');
             this.width = Flappy.Constants.gameWidth;
-            //this.tilePosition.x -= 0.1;
+            // this.tilePosition.x -= 0.1;
         }
     }
 }

@@ -43,13 +43,14 @@ var Flappy;
     Constants.gapSize = 200;
     Constants.serverUrl = 'http://localhost:9001';
     Constants.gameHeight = 665;
+    Constants.worldOffset = -1000;
     Flappy.Constants = Constants;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
     class Floor extends Phaser.TileSprite {
         constructor(game, height, key) {
-            super(game, 0, Flappy.Constants.gameHeight, Flappy.Constants.gameWidth, height, key);
+            super(game, Flappy.Constants.worldOffset, Flappy.Constants.gameHeight, Flappy.Constants.gameWidth, height, key);
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.body.immovable = true;
             this.body.allowGravity = false;
@@ -170,9 +171,8 @@ var Flappy;
             this.game.add.existing(this);
         }
         update() {
-            console.log('updating');
             this.width = Flappy.Constants.gameWidth;
-            //this.tilePosition.x -= 0.1;
+            // this.tilePosition.x -= 0.1;
         }
     }
     Flappy.Sky = Sky;
@@ -192,23 +192,20 @@ var Flappy;
                 this.game.load.image('pipeUpCap', 'assets/pipe-up.png');
                 this.game.load.audio('wing', 'assets/sounds/sfx_wing.ogg');
                 this.game.load.audio('hit', 'assets/sounds/sfx_hit.ogg');
-                this.game.stage.disableVisibilityChange = true;
             }
             create() {
                 this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
                 this.game.stage.backgroundColor = '#4ec0ca';
+                this.game.stage.disableVisibilityChange = true;
                 this.hitSound = this.game.add.audio('hit');
-                this.game.world.setBounds(0, 0, 3000, Flappy.Constants.gameHeight);
+                this.game.world.setBounds(Flappy.Constants.worldOffset, 0, 9000, Flappy.Constants.gameHeight);
                 this.game.physics.startSystem(Phaser.Physics.ARCADE);
                 this.game.physics.arcade.gravity.y = 100;
                 this.sky = new Flappy.Sky(this.game, 109, 'sky', floorHeight);
                 this.pipePool = new Flappy.PipePool(this.game);
-                this.pipePool.create(100, 100);
-                // this.pipeTest = new PipeSet(this.game, 700, 700, Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
                 this.floor = new Flappy.Floor(this.game, floorHeight, 'floor');
                 this.bird = new Flappy.Bird(this.game, 100, 100, 'bird');
-                this.game.camera.focusOnXY(this.bird.x, 100);
-                this.game.camera.follow(this.bird);
+                this.game.camera.follow(this.bird, Phaser.Camera.FOLLOW_PLATFORMER);
                 $.get(`${Flappy.Constants.serverUrl}/stage?start=2&end=8`, (data) => {
                     this.pipePool.addPipes(data);
                 });
