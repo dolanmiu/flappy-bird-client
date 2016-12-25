@@ -49,7 +49,7 @@ var Flappy;
 (function (Flappy) {
     class Floor extends Phaser.TileSprite {
         constructor(game, height, key) {
-            super(game, 0, Flappy.Constants.gameHeight, window.innerWidth, height, key);
+            super(game, 0, Flappy.Constants.gameHeight, Flappy.Constants.gameWidth, height, key);
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.body.immovable = true;
             this.body.allowGravity = false;
@@ -94,8 +94,6 @@ var Flappy;
             pipeCap.body.allowGravity = false;
             this.game.add.existing(this);
         }
-        update() {
-        }
     }
     Flappy.DownPipe = DownPipe;
 })(Flappy || (Flappy = {}));
@@ -108,7 +106,6 @@ var Flappy;
         }
         addPipes(pipes) {
             for (let pipe of pipes) {
-                console.log(pipe);
                 this.create(pipe.index * Flappy.Constants.gapSize, pipe.location);
             }
         }
@@ -124,7 +121,6 @@ var Flappy;
             //  The spawn method will handle stuff like position, resetting the health property
             //  and setting exists to true. The spawned object will live even if the returned
             //  reference is ignored
-            return obj.spawn(x, y);
         }
     }
     Flappy.PipePool = PipePool;
@@ -142,8 +138,6 @@ var Flappy;
         }
         update() {
             this.upPipe.update();
-        }
-        spawn() {
         }
     }
     Flappy.PipeSet = PipeSet;
@@ -169,15 +163,15 @@ var Flappy;
 var Flappy;
 (function (Flappy) {
     class Sky extends Phaser.TileSprite {
-        constructor(game, height, key) {
-            super(game, 0, window.innerHeight / 3 * 2, window.innerWidth, height, key);
+        constructor(game, height, key, offset) {
+            super(game, 0, Flappy.Constants.gameHeight - offset, Flappy.Constants.gameWidth, height, key);
             this.fixedToCamera = true;
             this.anchor.y = 1;
             this.game.add.existing(this);
         }
         update() {
-            this.y = window.innerHeight / 3 * 2;
-            this.width = window.innerWidth;
+            console.log('updating');
+            this.width = Flappy.Constants.gameWidth;
             //this.tilePosition.x -= 0.1;
         }
     }
@@ -187,6 +181,7 @@ var Flappy;
 (function (Flappy) {
     var State;
     (function (State) {
+        const floorHeight = 112;
         class Play extends Phaser.State {
             preload() {
                 this.game.load.spritesheet('bird', 'assets/bird.png', 34, 24);
@@ -201,15 +196,16 @@ var Flappy;
             }
             create() {
                 this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+                this.game.stage.backgroundColor = '#4ec0ca';
                 this.hitSound = this.game.add.audio('hit');
                 this.game.world.setBounds(0, 0, 3000, Flappy.Constants.gameHeight);
                 this.game.physics.startSystem(Phaser.Physics.ARCADE);
                 this.game.physics.arcade.gravity.y = 100;
-                this.sky = new Flappy.Sky(this.game, 109, 'sky');
+                this.sky = new Flappy.Sky(this.game, 109, 'sky', floorHeight);
                 this.pipePool = new Flappy.PipePool(this.game);
                 this.pipePool.create(100, 100);
                 // this.pipeTest = new PipeSet(this.game, 700, 700, Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
-                this.floor = new Flappy.Floor(this.game, 112, 'floor');
+                this.floor = new Flappy.Floor(this.game, floorHeight, 'floor');
                 this.bird = new Flappy.Bird(this.game, 100, 100, 'bird');
                 this.game.camera.focusOnXY(this.bird.x, 100);
                 this.game.camera.follow(this.bird);

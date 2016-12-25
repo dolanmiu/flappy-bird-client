@@ -1,5 +1,7 @@
 namespace Flappy.State {
 
+    const floorHeight: number = 112;
+
     export class Play extends Phaser.State {
 
         private bird: Bird;
@@ -24,6 +26,7 @@ namespace Flappy.State {
 
         public create(): void {
             this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+            this.game.stage.backgroundColor = '#4ec0ca';
 
             this.hitSound = this.game.add.audio('hit');
             this.game.world.setBounds(0, 0, 3000, Flappy.Constants.gameHeight);
@@ -31,12 +34,12 @@ namespace Flappy.State {
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
             this.game.physics.arcade.gravity.y = 100;
 
-            this.sky = new Sky(this.game, 109, 'sky');
+            this.sky = new Sky(this.game, 109, 'sky', floorHeight);
 
             this.pipePool = new PipePool(this.game);
             this.pipePool.create(100, 100);
             // this.pipeTest = new PipeSet(this.game, 700, 700, Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
-            this.floor = new Floor(this.game, 112, 'floor');
+            this.floor = new Floor(this.game, floorHeight, 'floor');
             this.bird = new Bird(this.game, 100, 100, 'bird');
             this.game.camera.focusOnXY(this.bird.x, 100);
             this.game.camera.follow(this.bird);

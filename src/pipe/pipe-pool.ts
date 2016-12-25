@@ -16,7 +16,7 @@ namespace Flappy {
             }
         }
 
-        public create(x: number, y: number): PipeSet {
+        public create(x: number, y: number) {
             // Find the first child that has a false exist property:
             let obj = this.getFirstExists(false);
             if (!obj) {
@@ -28,7 +28,6 @@ namespace Flappy {
             //  The spawn method will handle stuff like position, resetting the health property
             //  and setting exists to true. The spawned object will live even if the returned
             //  reference is ignored
-            return obj.spawn(x, y);
         }
     }
 }
