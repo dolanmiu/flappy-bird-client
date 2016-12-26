@@ -11,10 +11,8 @@ namespace Flappy {
         }
 
         public update(): void {
-            // this.y = window.innerHeight / 3 * 2;
             this.width = this.game.world.width;
             this.body.width = this.game.world.width;
-            // this.tilePosition.x -= this.game.time.elapsed * Constants.gameSpeed;
         }
     }
 }

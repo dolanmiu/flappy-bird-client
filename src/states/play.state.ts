@@ -50,7 +50,7 @@ namespace Flappy.State {
                 // this.hitSound.play();
             });
 
-            this.game.physics.arcade.collide(this.bird, this.pipePool, () => {
+            this.game.physics.arcade.overlap(this.bird, this.pipePool, () => {
                 console.log('hit pipes');
                 this.hitSound.play();
             });

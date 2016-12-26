@@ -58,10 +58,8 @@ var Flappy;
             this.game.add.existing(this);
         }
         update() {
-            // this.y = window.innerHeight / 3 * 2;
             this.width = this.game.world.width;
             this.body.width = this.game.world.width;
-            // this.tilePosition.x -= this.game.time.elapsed * Constants.gameSpeed;
         }
     }
     Flappy.Floor = Floor;
@@ -143,9 +141,6 @@ var Flappy;
             this.add(this.upPipe);
             this.add(this.downPipe);
         }
-        update() {
-            this.upPipe.update();
-        }
     }
     Flappy.PipeSet = PipeSet;
 })(Flappy || (Flappy = {}));
@@ -164,9 +159,6 @@ var Flappy;
             this.pipeBody.body.allowGravity = false;
             pipeCap.body.allowGravity = false;
             this.game.add.existing(this);
-        }
-        update() {
-            //this.pipeBody.height = (window.innerHeight / 3 * 2) - this.pipeBody.y;
         }
     }
     Flappy.UpPipe = UpPipe;
@@ -224,7 +216,7 @@ var Flappy;
                 this.game.physics.arcade.collide(this.bird, this.floor, () => {
                     // this.hitSound.play();
                 });
-                this.game.physics.arcade.collide(this.bird, this.pipePool, () => {
+                this.game.physics.arcade.overlap(this.bird, this.pipePool, () => {
                     console.log('hit pipes');
                     this.hitSound.play();
                 });
