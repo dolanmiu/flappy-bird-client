@@ -34,6 +34,15 @@ namespace Flappy {
             //  reference is ignored
         }
 
+        public get sprites(): Array<Phaser.Sprite | Phaser.TileSprite> {
+            let combinedArray = new Array<Phaser.Sprite | Phaser.TileSprite>();
+            for (let child of this.children) {
+                let pipe = <UpPipe | DownPipe> child;
+                combinedArray = combinedArray.concat(pipe.sprites);
+            }
+            return combinedArray;
+        }
+
         private map(input: number, inputMin: number, inputMax: number, outputMin: number, outputMax: number): number {
             return (input - inputMin) * (outputMax - outputMin) / (inputMax - inputMin) + outputMin;
         }

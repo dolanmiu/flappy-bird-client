@@ -11,5 +11,9 @@ namespace Flappy {
             this.add(this.upPipe);
             this.add(this.downPipe);
         }
+
+        public get sprites(): Array<Phaser.Sprite | Phaser.TileSprite> {
+            return this.downPipe.sprites.concat(this.upPipe.sprites);
+        }
     }
 }

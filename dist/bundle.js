@@ -83,15 +83,17 @@ var Flappy;
         constructor(game, x, y, pipeBodyKey, pipeCapKey) {
             super(game);
             this.pipeBody = new Phaser.TileSprite(game, x, y, 52, window.innerHeight, pipeBodyKey);
-            let pipeCap = new Phaser.Sprite(game, x, y, pipeCapKey);
+            this.pipeCap = new Phaser.Sprite(game, x, y, pipeCapKey);
             this.pipeBody.anchor.y = 1;
             this.add(this.pipeBody);
-            this.add(pipeCap);
-            this.game.physics.enable(this.pipeBody, Phaser.Physics.ARCADE);
-            this.game.physics.enable(pipeCap, Phaser.Physics.ARCADE);
+            this.add(this.pipeCap);
+            this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.pipeBody.body.allowGravity = false;
-            pipeCap.body.allowGravity = false;
+            this.pipeCap.body.allowGravity = false;
             this.game.add.existing(this);
+        }
+        get sprites() {
+            return [this.pipeBody, this.pipeCap];
         }
     }
     Flappy.DownPipe = DownPipe;
@@ -125,6 +127,14 @@ var Flappy;
             //  and setting exists to true. The spawned object will live even if the returned
             //  reference is ignored
         }
+        get sprites() {
+            let combinedArray = new Array();
+            for (let child of this.children) {
+                let pipe = child;
+                combinedArray = combinedArray.concat(pipe.sprites);
+            }
+            return combinedArray;
+        }
         map(input, inputMin, inputMax, outputMin, outputMax) {
             return (input - inputMin) * (outputMax - outputMin) / (inputMax - inputMin) + outputMin;
         }
@@ -141,8 +151,20 @@ var Flappy;
             this.add(this.upPipe);
             this.add(this.downPipe);
         }
+        get sprites() {
+            return this.downPipe.sprites.concat(this.upPipe.sprites);
+        }
     }
     Flappy.PipeSet = PipeSet;
+})(Flappy || (Flappy = {}));
+var Flappy;
+(function (Flappy) {
+    class Pipe extends Phaser.Group {
+        get sprites() {
+            return [this.pipeBody, this.pipeCap];
+        }
+    }
+    Flappy.Pipe = Pipe;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
@@ -150,15 +172,17 @@ var Flappy;
         constructor(game, x, y, pipeBodyKey, pipeCapKey) {
             super(game);
             this.pipeBody = new Phaser.TileSprite(game, x, y, 52, window.innerHeight, pipeBodyKey);
-            let pipeCap = new Phaser.Sprite(game, x, y, pipeCapKey);
-            pipeCap.anchor.y = 1;
+            this.pipeCap = new Phaser.Sprite(game, x, y, pipeCapKey);
+            this.pipeCap.anchor.y = 1;
             this.add(this.pipeBody);
-            this.add(pipeCap);
-            this.game.physics.enable(this.pipeBody, Phaser.Physics.ARCADE);
-            this.game.physics.enable(pipeCap, Phaser.Physics.ARCADE);
+            this.add(this.pipeCap);
+            this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.pipeBody.body.allowGravity = false;
-            pipeCap.body.allowGravity = false;
+            this.pipeCap.body.allowGravity = false;
             this.game.add.existing(this);
+        }
+        get sprites() {
+            return [this.pipeBody, this.pipeCap];
         }
     }
     Flappy.UpPipe = UpPipe;
@@ -216,7 +240,7 @@ var Flappy;
                 this.game.physics.arcade.collide(this.bird, this.floor, () => {
                     // this.hitSound.play();
                 });
-                this.game.physics.arcade.overlap(this.bird, this.pipePool, () => {
+                this.game.physics.arcade.overlap(this.bird, this.pipePool.sprites, () => {
                     console.log('hit pipes');
                     this.hitSound.play();
                 });
