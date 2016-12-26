@@ -43,6 +43,12 @@ namespace Flappy.State {
             $.get(`${Flappy.Constants.serverUrl}/stage?start=2&end=8`, (data) => {
                 this.pipePool.addPipes(data);
             });
+
+            let socket = io.connect(Constants.serverUrl);
+            /*socket.on('news', (data) =>  {
+                console.log(data);
+                socket.emit('my other event', { my: 'data' });
+            });*/
         }
 
         public update(): void {

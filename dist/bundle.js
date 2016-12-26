@@ -159,15 +159,6 @@ var Flappy;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
-    class Pipe extends Phaser.Group {
-        get sprites() {
-            return [this.pipeBody, this.pipeCap];
-        }
-    }
-    Flappy.Pipe = Pipe;
-})(Flappy || (Flappy = {}));
-var Flappy;
-(function (Flappy) {
     class UpPipe extends Phaser.Group {
         constructor(game, x, y, pipeBodyKey, pipeCapKey) {
             super(game);
@@ -235,6 +226,11 @@ var Flappy;
                 $.get(`${Flappy.Constants.serverUrl}/stage?start=2&end=8`, (data) => {
                     this.pipePool.addPipes(data);
                 });
+                let socket = io.connect(Flappy.Constants.serverUrl);
+                /*socket.on('news', (data) =>  {
+                    console.log(data);
+                    socket.emit('my other event', { my: 'data' });
+                });*/
             }
             update() {
                 this.game.physics.arcade.collide(this.bird, this.floor, () => {
