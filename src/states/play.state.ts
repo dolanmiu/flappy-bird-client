@@ -19,6 +19,10 @@ namespace Flappy.State {
             this.game.load.image('pipeBody', 'assets/pipe.png');
             this.game.load.image('pipeDownCap', 'assets/pipe-down.png');
             this.game.load.image('pipeUpCap', 'assets/pipe-up.png');
+
+            this.game.load.image('gameOver', 'assets/game-over.png');
+            this.game.load.image('scoreBoard', 'assets/score-board.png');
+
             this.game.load.audio('wing', 'assets/sounds/sfx_wing.ogg');
             this.game.load.audio('hit', 'assets/sounds/sfx_hit.ogg');
             this.game.load.audio('die', 'assets/sounds/sfx_die.ogg');
