@@ -109,7 +109,6 @@ var Flappy;
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.pipeBody.body.allowGravity = false;
             this.pipeCap.body.allowGravity = false;
-            this.game.add.existing(this);
         }
         get sprites() {
             return [this.pipeBody, this.pipeCap];
@@ -189,13 +188,38 @@ var Flappy;
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.pipeBody.body.allowGravity = false;
             this.pipeCap.body.allowGravity = false;
-            this.game.add.existing(this);
         }
         get sprites() {
             return [this.pipeBody, this.pipeCap];
         }
     }
     Flappy.UpPipe = UpPipe;
+})(Flappy || (Flappy = {}));
+var Flappy;
+(function (Flappy) {
+    class ScoreBoard extends Phaser.Group {
+        constructor(game, gameOverKey, scoreBoardKey) {
+            super(game);
+            this.gameOver = new Phaser.Sprite(game, Flappy.Constants.gameWidth / 2, Flappy.Constants.gameHeight / 2 - 100, gameOverKey);
+            this.gameOver.anchor.x = 0.5;
+            this.gameOver.anchor.y = 0.5;
+            this.add(this.gameOver);
+            this.scoreBoard = new Phaser.Sprite(game, Flappy.Constants.gameWidth / 2, Flappy.Constants.gameHeight / 2, scoreBoardKey);
+            this.scoreBoard.anchor.x = 0.5;
+            this.scoreBoard.anchor.y = 0.5;
+            this.add(this.scoreBoard);
+            this.fixedToCamera = true;
+        }
+        show() {
+        }
+        update() {
+            this.gameOver.x = Flappy.Constants.gameWidth / 2;
+            this.gameOver.y = Flappy.Constants.gameHeight / 2 - 100;
+            this.scoreBoard.x = Flappy.Constants.gameWidth / 2;
+            this.scoreBoard.y = Flappy.Constants.gameHeight / 2;
+        }
+    }
+    Flappy.ScoreBoard = ScoreBoard;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
@@ -247,6 +271,7 @@ var Flappy;
                 $.get(`${Flappy.Constants.serverUrl}/stage?start=2&end=8`, (data) => {
                     this.pipePool.addPipes(data);
                 });
+                let g = new Flappy.ScoreBoard(this.game, 'gameOver', 'scoreBoard');
                 let socket = io.connect(Flappy.Constants.serverUrl);
                 /*socket.on('news', (data) =>  {
                     console.log(data);

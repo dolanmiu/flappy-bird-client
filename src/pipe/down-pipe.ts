@@ -15,8 +15,6 @@ namespace Flappy {
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.pipeBody.body.allowGravity = false;
             this.pipeCap.body.allowGravity = false;
-
-            this.game.add.existing(this);
         }
 
         public get sprites(): Array<Phaser.Sprite | Phaser.TileSprite> {

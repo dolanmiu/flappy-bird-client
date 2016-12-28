@@ -46,6 +46,8 @@ namespace Flappy.State {
                 this.pipePool.addPipes(data);
             });
 
+            let g = new ScoreBoard(this.game, 'gameOver', 'scoreBoard');
+
             let socket = io.connect(Constants.serverUrl);
             /*socket.on('news', (data) =>  {
                 console.log(data);
