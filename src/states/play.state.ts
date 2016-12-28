@@ -9,9 +9,6 @@ namespace Flappy.State {
         private floor: Floor;
         private pipePool: PipePool;
 
-        private hitSound: Phaser.Sound;
-        private dieSound: Phaser.Sound;
-
         public preload(): void {
             this.game.load.spritesheet('bird', 'assets/bird.png', 34, 24);
             this.game.load.image('sky', 'assets/sky.png');
@@ -32,9 +29,6 @@ namespace Flappy.State {
             this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
             this.game.stage.backgroundColor = '#4ec0ca';
             this.game.stage.disableVisibilityChange = true;
-
-            this.hitSound = this.game.add.audio('hit');
-            this.dieSound = this.game.add.audio('die');
 
             this.game.world.setBounds(Flappy.Constants.worldOffset, 0, 9000, Flappy.Constants.gameHeight);
 
@@ -65,19 +59,8 @@ namespace Flappy.State {
             });
 
             this.game.physics.arcade.overlap(this.bird, this.pipePool.sprites, () => {
-                this.deathSequence();
+                this.bird.deathSequence();
             });
-        }
-
-        private deathSequence(): void {
-            if (this.bird.isStopped) {
-                return;
-            }
-            this.hitSound.play();
-            setTimeout(() => {
-                this.dieSound.play();
-            }, 300);
-            this.bird.stop();
         }
     }
 }

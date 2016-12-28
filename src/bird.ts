@@ -8,6 +8,9 @@ namespace Flappy {
         private spaceKey: Phaser.Key;
         private currentSpeed: number;
 
+        private hitSound: Phaser.Sound;
+        private dieSound: Phaser.Sound;
+
         constructor(game: Phaser.Game, x: number, y: number, key: string) {
             super(game, x, y, key);
 
@@ -20,6 +23,8 @@ namespace Flappy {
             this.anchor.set(0.5, 0.5);
             this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
 
+            this.hitSound = this.game.add.audio('hit');
+            this.dieSound = this.game.add.audio('die');
             let wingSound = this.game.add.audio('wing');
 
             this.spaceKey.onDown.add(() => {
@@ -40,6 +45,17 @@ namespace Flappy {
 
         public get isStopped(): boolean {
             return this.currentSpeed === 0;
+        }
+
+        public deathSequence(): void {
+            if (this.isStopped) {
+                return;
+            }
+            this.hitSound.play();
+            setTimeout(() => {
+                this.dieSound.play();
+            }, 300);
+            this.stop();
         }
 
         private calculateAngle(speed: number): number {
