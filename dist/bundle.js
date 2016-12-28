@@ -5,6 +5,7 @@ var Flappy;
     class Bird extends Phaser.Sprite {
         constructor(game, x, y, key) {
             super(game, x, y, key);
+            this.currentSpeed = Flappy.Constants.gameSpeed;
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.game.add.existing(this);
             this.animations.add('fly');
@@ -20,7 +21,13 @@ var Flappy;
         update() {
             // console.log(this.body.velocity.y);
             this.angle = this.calculateAngle(this.body.velocity.y);
-            this.x += this.game.time.elapsed * Flappy.Constants.gameSpeed;
+            this.x += this.game.time.elapsed * this.currentSpeed;
+        }
+        stop() {
+            this.currentSpeed = 0;
+        }
+        get isStopped() {
+            return this.currentSpeed === 0;
         }
         calculateAngle(speed) {
             if (speed >= 90) {
@@ -209,12 +216,14 @@ var Flappy;
                 this.game.load.image('pipeUpCap', 'assets/pipe-up.png');
                 this.game.load.audio('wing', 'assets/sounds/sfx_wing.ogg');
                 this.game.load.audio('hit', 'assets/sounds/sfx_hit.ogg');
+                this.game.load.audio('die', 'assets/sounds/sfx_die.ogg');
             }
             create() {
                 this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
                 this.game.stage.backgroundColor = '#4ec0ca';
                 this.game.stage.disableVisibilityChange = true;
                 this.hitSound = this.game.add.audio('hit');
+                this.dieSound = this.game.add.audio('die');
                 this.game.world.setBounds(Flappy.Constants.worldOffset, 0, 9000, Flappy.Constants.gameHeight);
                 this.game.physics.startSystem(Phaser.Physics.ARCADE);
                 this.game.physics.arcade.gravity.y = 100;
@@ -237,9 +246,18 @@ var Flappy;
                     // this.hitSound.play();
                 });
                 this.game.physics.arcade.overlap(this.bird, this.pipePool.sprites, () => {
-                    console.log('hit pipes');
-                    this.hitSound.play();
+                    this.deathSequence();
                 });
+            }
+            deathSequence() {
+                if (this.bird.isStopped) {
+                    return;
+                }
+                this.hitSound.play();
+                setTimeout(() => {
+                    this.dieSound.play();
+                }, 300);
+                this.bird.stop();
             }
         }
         State.Play = Play;

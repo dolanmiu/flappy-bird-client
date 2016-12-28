@@ -10,6 +10,7 @@ namespace Flappy.State {
         private pipePool: PipePool;
 
         private hitSound: Phaser.Sound;
+        private dieSound: Phaser.Sound;
 
         public preload(): void {
             this.game.load.spritesheet('bird', 'assets/bird.png', 34, 24);
@@ -20,6 +21,7 @@ namespace Flappy.State {
             this.game.load.image('pipeUpCap', 'assets/pipe-up.png');
             this.game.load.audio('wing', 'assets/sounds/sfx_wing.ogg');
             this.game.load.audio('hit', 'assets/sounds/sfx_hit.ogg');
+            this.game.load.audio('die', 'assets/sounds/sfx_die.ogg');
         }
 
         public create(): void {
@@ -28,6 +30,8 @@ namespace Flappy.State {
             this.game.stage.disableVisibilityChange = true;
 
             this.hitSound = this.game.add.audio('hit');
+            this.dieSound = this.game.add.audio('die');
+
             this.game.world.setBounds(Flappy.Constants.worldOffset, 0, 9000, Flappy.Constants.gameHeight);
 
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -57,9 +61,19 @@ namespace Flappy.State {
             });
 
             this.game.physics.arcade.overlap(this.bird, this.pipePool.sprites, () => {
-                console.log('hit pipes');
-                this.hitSound.play();
+                this.deathSequence();
             });
+        }
+
+        private deathSequence(): void {
+            if (this.bird.isStopped) {
+                return;
+            }
+            this.hitSound.play();
+            setTimeout(() => {
+                this.dieSound.play();
+            }, 300);
+            this.bird.stop();
         }
     }
 }

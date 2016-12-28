@@ -6,9 +6,12 @@ namespace Flappy {
     export class Bird extends Phaser.Sprite {
 
         private spaceKey: Phaser.Key;
+        private currentSpeed: number;
 
         constructor(game: Phaser.Game, x: number, y: number, key: string) {
             super(game, x, y, key);
+
+            this.currentSpeed = Constants.gameSpeed;
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.game.add.existing(this);
 
@@ -28,7 +31,15 @@ namespace Flappy {
         public update(): void {
             // console.log(this.body.velocity.y);
             this.angle = this.calculateAngle(this.body.velocity.y);
-            this.x += this.game.time.elapsed * Constants.gameSpeed;
+            this.x += this.game.time.elapsed * this.currentSpeed;
+        }
+
+        public stop(): void {
+            this.currentSpeed = 0;
+        }
+
+        public get isStopped(): boolean {
+            return this.currentSpeed === 0;
         }
 
         private calculateAngle(speed: number): number {
@@ -37,5 +48,6 @@ namespace Flappy {
             }
             return speed;
         }
+
     }
 }
