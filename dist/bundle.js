@@ -152,8 +152,16 @@ var Flappy;
         get sprites() {
             let combinedArray = new Array();
             for (let child of this.children) {
-                let pipe = child;
-                combinedArray = combinedArray.concat(pipe.sprites);
+                let pipeSet = child;
+                combinedArray = combinedArray.concat(pipeSet.sprites);
+            }
+            return combinedArray;
+        }
+        get holes() {
+            let combinedArray = new Array();
+            for (let child of this.children) {
+                let pipeSet = child;
+                combinedArray = combinedArray.concat(pipeSet.hole);
             }
             return combinedArray;
         }
@@ -173,6 +181,12 @@ var Flappy;
                 pipeCapKey: params.pipeUpCapKey,
             });
             this.add(this.upPipe);
+            this.pipeHole = new Phaser.Sprite(game, x, y);
+            this.pipeHole.width = this.upPipe.width;
+            this.pipeHole.height = gapSize;
+            this.game.physics.enable(this.pipeHole, Phaser.Physics.ARCADE);
+            this.pipeHole.body.allowGravity = false;
+            this.add(this.pipeHole);
             this.downPipe = new Flappy.DownPipe(game, x, y, {
                 pipeBodyKey: params.pipeBodyKey,
                 pipeCapKey: params.pipeDownCapKey,
@@ -181,6 +195,9 @@ var Flappy;
         }
         get sprites() {
             return this.downPipe.sprites.concat(this.upPipe.sprites);
+        }
+        get hole() {
+            return this.pipeHole;
         }
     }
     Flappy.PipeSet = PipeSet;
@@ -277,6 +294,7 @@ var Flappy;
                 this.game.load.audio('hit', 'assets/sounds/sfx_hit.ogg');
                 this.game.load.audio('die', 'assets/sounds/sfx_die.ogg');
                 this.game.load.audio('woosh', 'assets/sounds/sfx_swooshing.ogg');
+                this.game.load.audio('point', 'assets/sounds/sfx_point.ogg');
             }
             create() {
                 this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
@@ -303,6 +321,7 @@ var Flappy;
                     scoreBoardKey: 'scoreBoard',
                     wooshSoundKey: 'woosh',
                 });
+                this.pointSound = this.game.add.audio('point');
                 let socket = io.connect(Flappy.Constants.serverUrl);
                 /*socket.on('news', (data) =>  {
                     console.log(data);
@@ -322,6 +341,9 @@ var Flappy;
                     this.gameOver = true;
                     this.bird.deathSequence();
                     this.scoreBoard.show();
+                });
+                this.game.physics.arcade.overlap(this.bird, this.pipePool.holes, () => {
+                    this.pointSound.play();
                 });
             }
         }

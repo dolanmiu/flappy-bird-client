@@ -41,8 +41,17 @@ namespace Flappy {
         public get sprites(): Array<Phaser.Sprite | Phaser.TileSprite> {
             let combinedArray = new Array<Phaser.Sprite | Phaser.TileSprite>();
             for (let child of this.children) {
-                let pipe = <UpPipe | DownPipe> child;
-                combinedArray = combinedArray.concat(pipe.sprites);
+                let pipeSet = <PipeSet> child;
+                combinedArray = combinedArray.concat(pipeSet.sprites);
+            }
+            return combinedArray;
+        }
+
+        public get holes(): Array<Phaser.Sprite> {
+            let combinedArray = new Array<Phaser.Sprite>();
+            for (let child of this.children) {
+                let pipeSet = <PipeSet> child;
+                combinedArray = combinedArray.concat(pipeSet.hole);
             }
             return combinedArray;
         }

@@ -12,6 +12,8 @@ namespace Flappy.State {
 
         private gameOver: boolean;
 
+        private pointSound: Phaser.Sound;
+
         public preload(): void {
             this.game.load.spritesheet('bird', 'assets/bird.png', 34, 24);
             this.game.load.image('sky', 'assets/sky.png');
@@ -27,6 +29,7 @@ namespace Flappy.State {
             this.game.load.audio('hit', 'assets/sounds/sfx_hit.ogg');
             this.game.load.audio('die', 'assets/sounds/sfx_die.ogg');
             this.game.load.audio('woosh', 'assets/sounds/sfx_swooshing.ogg');
+            this.game.load.audio('point', 'assets/sounds/sfx_point.ogg');
         }
 
         public create(): void {
@@ -62,6 +65,8 @@ namespace Flappy.State {
                 wooshSoundKey: 'woosh',
             });
 
+            this.pointSound = this.game.add.audio('point');
+
             let socket = io.connect(Constants.serverUrl);
             /*socket.on('news', (data) =>  {
                 console.log(data);
@@ -84,6 +89,10 @@ namespace Flappy.State {
                 this.gameOver = true;
                 this.bird.deathSequence();
                 this.scoreBoard.show();
+            });
+
+            this.game.physics.arcade.overlap(this.bird, this.pipePool.holes, () => {
+                this.pointSound.play();
             });
         }
     }
