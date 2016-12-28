@@ -43,7 +43,13 @@ namespace Flappy.State {
 
             this.pipePool = new PipePool(this.game, floorHeight);
             this.floor = new Floor(this.game, floorHeight, 'floor');
-            this.bird = new Bird(this.game, 100, 100, 'bird');
+            this.bird = new Bird(this.game, 100, 100, {
+                dieSoundKey: 'die',
+                hitSoundKey: 'hit',
+                key: 'bird',
+                windSoundKey: 'wing',
+            });
+
             this.game.camera.follow(this.bird, Phaser.Camera.FOLLOW_PLATFORMER);
 
             $.get(`${Flappy.Constants.serverUrl}/stage?start=2&end=8`, (data) => {

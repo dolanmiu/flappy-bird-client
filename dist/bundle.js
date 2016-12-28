@@ -3,8 +3,8 @@ var Flappy;
     const jumpSpeed = 60;
     const jumpTiltAngle = -60;
     class Bird extends Phaser.Sprite {
-        constructor(game, x, y, key) {
-            super(game, x, y, key);
+        constructor(game, x, y, params) {
+            super(game, x, y, params.key);
             this.currentSpeed = Flappy.Constants.gameSpeed;
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.game.add.existing(this);
@@ -12,9 +12,9 @@ var Flappy;
             this.animations.play('fly', 3, true);
             this.anchor.set(0.5, 0.5);
             this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
-            this.hitSound = this.game.add.audio('hit');
-            this.dieSound = this.game.add.audio('die');
-            let wingSound = this.game.add.audio('wing');
+            this.hitSound = this.game.add.audio(params.hitSoundKey);
+            this.dieSound = this.game.add.audio(params.dieSoundKey);
+            let wingSound = this.game.add.audio(params.windSoundKey);
             this.spaceKey.onDown.add(() => {
                 this.body.velocity.y = -jumpSpeed;
                 wingSound.play();
@@ -201,13 +201,11 @@ var Flappy;
         constructor(game, params) {
             super(game);
             this.gameOver = new Phaser.Sprite(game, Flappy.Constants.gameWidth / 2, Flappy.Constants.gameHeight / 2 - 100, params.gameOverKey);
-            this.gameOver.anchor.x = 0.5;
-            this.gameOver.anchor.y = 0.5;
+            this.gameOver.anchor.set(0.5, 0.5);
             this.gameOver.alpha = 0;
             this.add(this.gameOver);
             this.scoreBoard = new Phaser.Sprite(game, Flappy.Constants.gameWidth / 2, Flappy.Constants.gameHeight / 2, params.scoreBoardKey);
-            this.scoreBoard.anchor.x = 0.5;
-            this.scoreBoard.anchor.y = 0.5;
+            this.scoreBoard.anchor.set(0.5, 0.5);
             this.scoreBoard.alpha = 0;
             this.add(this.scoreBoard);
             this.wooshSound = game.add.audio(params.wooshSoundKey);
@@ -280,7 +278,12 @@ var Flappy;
                 this.sky = new Flappy.Sky(this.game, 109, 'sky', floorHeight);
                 this.pipePool = new Flappy.PipePool(this.game, floorHeight);
                 this.floor = new Flappy.Floor(this.game, floorHeight, 'floor');
-                this.bird = new Flappy.Bird(this.game, 100, 100, 'bird');
+                this.bird = new Flappy.Bird(this.game, 100, 100, {
+                    dieSoundKey: 'die',
+                    hitSoundKey: 'hit',
+                    key: 'bird',
+                    windSoundKey: 'wing',
+                });
                 this.game.camera.follow(this.bird, Phaser.Camera.FOLLOW_PLATFORMER);
                 $.get(`${Flappy.Constants.serverUrl}/stage?start=2&end=8`, (data) => {
                     this.pipePool.addPipes(data);

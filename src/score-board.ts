@@ -15,14 +15,12 @@ namespace Flappy {
             super(game);
 
             this.gameOver = new Phaser.Sprite(game, Constants.gameWidth / 2, Constants.gameHeight / 2 - 100, params.gameOverKey);
-            this.gameOver.anchor.x = 0.5;
-            this.gameOver.anchor.y = 0.5;
+            this.gameOver.anchor.set(0.5, 0.5);
             this.gameOver.alpha = 0;
             this.add(this.gameOver);
 
             this.scoreBoard = new Phaser.Sprite(game, Constants.gameWidth / 2, Constants.gameHeight / 2, params.scoreBoardKey);
-            this.scoreBoard.anchor.x = 0.5;
-            this.scoreBoard.anchor.y = 0.5;
+            this.scoreBoard.anchor.set(0.5, 0.5);
             this.scoreBoard.alpha = 0;
             this.add(this.scoreBoard);
 

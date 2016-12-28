@@ -3,6 +3,13 @@ namespace Flappy {
     const jumpSpeed = 60;
     const jumpTiltAngle = -60;
 
+    interface IBirdParams {
+        key: string;
+        hitSoundKey: string;
+        dieSoundKey: string;
+        windSoundKey: string;
+    }
+
     export class Bird extends Phaser.Sprite {
 
         private spaceKey: Phaser.Key;
@@ -11,8 +18,8 @@ namespace Flappy {
         private hitSound: Phaser.Sound;
         private dieSound: Phaser.Sound;
 
-        constructor(game: Phaser.Game, x: number, y: number, key: string) {
-            super(game, x, y, key);
+        constructor(game: Phaser.Game, x: number, y: number, params: IBirdParams) {
+            super(game, x, y, params.key);
 
             this.currentSpeed = Constants.gameSpeed;
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
@@ -23,9 +30,9 @@ namespace Flappy {
             this.anchor.set(0.5, 0.5);
             this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
 
-            this.hitSound = this.game.add.audio('hit');
-            this.dieSound = this.game.add.audio('die');
-            let wingSound = this.game.add.audio('wing');
+            this.hitSound = this.game.add.audio(params.hitSoundKey);
+            this.dieSound = this.game.add.audio(params.dieSoundKey);
+            let wingSound = this.game.add.audio(params.windSoundKey);
 
             this.spaceKey.onDown.add(() => {
                 this.body.velocity.y = -jumpSpeed;
