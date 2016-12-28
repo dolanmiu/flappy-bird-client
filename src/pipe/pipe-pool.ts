@@ -25,7 +25,11 @@ namespace Flappy {
             let obj = this.getFirstExists(false);
             if (!obj) {
                 // We failed to find an availble child, so we create one now and add it to the pool.
-                obj = new PipeSet(this.game, x, y, Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
+                obj = new PipeSet(this.game, x, y, Constants.gapSize, {
+                    pipeBodyKey: 'pipeBody',
+                    pipeDownCapKey: 'pipeDownCap',
+                    pipeUpCapKey: 'pipeUpCap',
+                });
                 this.add(obj, true);
             }
             //  We call the childs spawn method and return the object to whatever triggered this.

@@ -1,14 +1,27 @@
 namespace Flappy {
+    interface IPipeSetParams {
+        pipeBodyKey: string;
+        pipeDownCapKey: string;
+        pipeUpCapKey: string;
+    }
+
     export class PipeSet extends Phaser.Group {
         private downPipe: DownPipe;
         private upPipe: UpPipe;
 
-        constructor(game: Phaser.Game, x: number, y: number, gapSize: number, pipeBodyKey: string, pipeDownCapKey: string, pipeUpCapKey: string) {
+        constructor(game: Phaser.Game, x: number, y: number, gapSize: number, params: IPipeSetParams) {
             super(game);
-            this.upPipe = new UpPipe(game, x, y + gapSize, pipeBodyKey, pipeUpCapKey);
-            this.downPipe = new DownPipe(game, x, y, pipeBodyKey, pipeDownCapKey);
 
+            this.upPipe = new UpPipe(game, x, y + gapSize, {
+                pipeBodyKey: params.pipeBodyKey,
+                pipeCapKey: params.pipeDownCapKey,
+            });
             this.add(this.upPipe);
+
+            this.downPipe = new DownPipe(game, x, y, {
+                pipeBodyKey: params.pipeBodyKey,
+                pipeCapKey: params.pipeDownCapKey,
+            });
             this.add(this.downPipe);
         }
 
