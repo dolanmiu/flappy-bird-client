@@ -26,6 +26,7 @@ namespace Flappy.State {
             this.game.load.audio('wing', 'assets/sounds/sfx_wing.ogg');
             this.game.load.audio('hit', 'assets/sounds/sfx_hit.ogg');
             this.game.load.audio('die', 'assets/sounds/sfx_die.ogg');
+            this.game.load.audio('woosh', 'assets/sounds/sfx_swooshing.ogg');
         }
 
         public create(): void {
@@ -49,7 +50,11 @@ namespace Flappy.State {
                 this.pipePool.addPipes(data);
             });
 
-            this.scoreBoard = new ScoreBoard(this.game, 'gameOver', 'scoreBoard');
+            this.scoreBoard = new ScoreBoard(this.game, {
+                gameOverKey: 'gameOver',
+                scoreBoardKey: 'scoreBoard',
+                wooshSoundKey: 'woosh',
+            });
 
             let socket = io.connect(Constants.serverUrl);
             /*socket.on('news', (data) =>  {
@@ -64,7 +69,9 @@ namespace Flappy.State {
             }
 
             this.game.physics.arcade.collide(this.bird, this.floor, () => {
-                // this.hitSound.play();
+                this.gameOver = true;
+                this.bird.deathSequence();
+                this.scoreBoard.show();
             });
 
             this.game.physics.arcade.overlap(this.bird, this.pipePool.sprites, () => {

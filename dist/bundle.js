@@ -198,25 +198,32 @@ var Flappy;
 var Flappy;
 (function (Flappy) {
     class ScoreBoard extends Phaser.Group {
-        constructor(game, gameOverKey, scoreBoardKey) {
+        constructor(game, params) {
             super(game);
-            this.gameOver = new Phaser.Sprite(game, Flappy.Constants.gameWidth / 2, Flappy.Constants.gameHeight / 2 - 100, gameOverKey);
+            this.gameOver = new Phaser.Sprite(game, Flappy.Constants.gameWidth / 2, Flappy.Constants.gameHeight / 2 - 100, params.gameOverKey);
             this.gameOver.anchor.x = 0.5;
             this.gameOver.anchor.y = 0.5;
             this.gameOver.alpha = 0;
             this.add(this.gameOver);
-            this.scoreBoard = new Phaser.Sprite(game, Flappy.Constants.gameWidth / 2, Flappy.Constants.gameHeight / 2, scoreBoardKey);
+            this.scoreBoard = new Phaser.Sprite(game, Flappy.Constants.gameWidth / 2, Flappy.Constants.gameHeight / 2, params.scoreBoardKey);
             this.scoreBoard.anchor.x = 0.5;
             this.scoreBoard.anchor.y = 0.5;
             this.scoreBoard.alpha = 0;
             this.add(this.scoreBoard);
+            this.wooshSound = game.add.audio(params.wooshSoundKey);
             this.fixedToCamera = true;
         }
         show() {
             this.gameOver.y = Flappy.Constants.gameHeight / 2 - 80;
-            this.game.add.tween(this.gameOver).to({ alpha: 1, y: Flappy.Constants.gameHeight / 2 - 100 }, 700, Phaser.Easing.Exponential.Out, true, 200);
+            let gameOverTween = this.game.add.tween(this.gameOver).to({ alpha: 1, y: Flappy.Constants.gameHeight / 2 - 100 }, 500, Phaser.Easing.Exponential.Out, true, 500);
+            gameOverTween.onStart.add(() => {
+                this.wooshSound.play();
+            });
             this.scoreBoard.y = Flappy.Constants.gameHeight / 2 + 20;
-            this.game.add.tween(this.scoreBoard).to({ alpha: 1, y: Flappy.Constants.gameHeight / 2 }, 700, Phaser.Easing.Exponential.Out, true, 500);
+            let scoreBoardTween = this.game.add.tween(this.scoreBoard).to({ alpha: 1, y: Flappy.Constants.gameHeight / 2 }, 500, Phaser.Easing.Exponential.Out, true, 1500);
+            scoreBoardTween.onStart.add(() => {
+                this.wooshSound.play();
+            });
         }
         update() {
             this.gameOver.x = Flappy.Constants.gameWidth / 2;
@@ -261,6 +268,7 @@ var Flappy;
                 this.game.load.audio('wing', 'assets/sounds/sfx_wing.ogg');
                 this.game.load.audio('hit', 'assets/sounds/sfx_hit.ogg');
                 this.game.load.audio('die', 'assets/sounds/sfx_die.ogg');
+                this.game.load.audio('woosh', 'assets/sounds/sfx_swooshing.ogg');
             }
             create() {
                 this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
@@ -277,7 +285,11 @@ var Flappy;
                 $.get(`${Flappy.Constants.serverUrl}/stage?start=2&end=8`, (data) => {
                     this.pipePool.addPipes(data);
                 });
-                this.scoreBoard = new Flappy.ScoreBoard(this.game, 'gameOver', 'scoreBoard');
+                this.scoreBoard = new Flappy.ScoreBoard(this.game, {
+                    gameOverKey: 'gameOver',
+                    scoreBoardKey: 'scoreBoard',
+                    wooshSoundKey: 'woosh',
+                });
                 let socket = io.connect(Flappy.Constants.serverUrl);
                 /*socket.on('news', (data) =>  {
                     console.log(data);
@@ -289,7 +301,9 @@ var Flappy;
                     return;
                 }
                 this.game.physics.arcade.collide(this.bird, this.floor, () => {
-                    // this.hitSound.play();
+                    this.gameOver = true;
+                    this.bird.deathSequence();
+                    this.scoreBoard.show();
                 });
                 this.game.physics.arcade.overlap(this.bird, this.pipePool.sprites, () => {
                     this.gameOver = true;
