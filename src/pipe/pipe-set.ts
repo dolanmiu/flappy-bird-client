@@ -14,7 +14,7 @@ namespace Flappy {
 
             this.upPipe = new UpPipe(game, x, y + gapSize, {
                 pipeBodyKey: params.pipeBodyKey,
-                pipeCapKey: params.pipeDownCapKey,
+                pipeCapKey: params.pipeUpCapKey,
             });
             this.add(this.upPipe);
 

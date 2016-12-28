@@ -99,10 +99,10 @@ var Flappy;
 var Flappy;
 (function (Flappy) {
     class DownPipe extends Phaser.Group {
-        constructor(game, x, y, pipeBodyKey, pipeCapKey) {
+        constructor(game, x, y, params) {
             super(game);
-            this.pipeBody = new Phaser.TileSprite(game, x, y, 52, window.innerHeight, pipeBodyKey);
-            this.pipeCap = new Phaser.Sprite(game, x, y, pipeCapKey);
+            this.pipeBody = new Phaser.TileSprite(game, x, y, 52, window.innerHeight, params.pipeBodyKey);
+            this.pipeCap = new Phaser.Sprite(game, x, y, params.pipeCapKey);
             this.pipeBody.anchor.y = 1;
             this.add(this.pipeBody);
             this.add(this.pipeCap);
@@ -137,7 +137,11 @@ var Flappy;
             let obj = this.getFirstExists(false);
             if (!obj) {
                 // We failed to find an availble child, so we create one now and add it to the pool.
-                obj = new Flappy.PipeSet(this.game, x, y, Flappy.Constants.gapSize, 'pipeBody', 'pipeDownCap', 'pipeUpCap');
+                obj = new Flappy.PipeSet(this.game, x, y, Flappy.Constants.gapSize, {
+                    pipeBodyKey: 'pipeBody',
+                    pipeDownCapKey: 'pipeDownCap',
+                    pipeUpCapKey: 'pipeUpCap',
+                });
                 this.add(obj, true);
             }
             //  We call the childs spawn method and return the object to whatever triggered this.
@@ -162,11 +166,17 @@ var Flappy;
 var Flappy;
 (function (Flappy) {
     class PipeSet extends Phaser.Group {
-        constructor(game, x, y, gapSize, pipeBodyKey, pipeDownCapKey, pipeUpCapKey) {
+        constructor(game, x, y, gapSize, params) {
             super(game);
-            this.upPipe = new Flappy.UpPipe(game, x, y + gapSize, pipeBodyKey, pipeUpCapKey);
-            this.downPipe = new Flappy.DownPipe(game, x, y, pipeBodyKey, pipeDownCapKey);
+            this.upPipe = new Flappy.UpPipe(game, x, y + gapSize, {
+                pipeBodyKey: params.pipeBodyKey,
+                pipeCapKey: params.pipeUpCapKey,
+            });
             this.add(this.upPipe);
+            this.downPipe = new Flappy.DownPipe(game, x, y, {
+                pipeBodyKey: params.pipeBodyKey,
+                pipeCapKey: params.pipeDownCapKey,
+            });
             this.add(this.downPipe);
         }
         get sprites() {
@@ -178,10 +188,10 @@ var Flappy;
 var Flappy;
 (function (Flappy) {
     class UpPipe extends Phaser.Group {
-        constructor(game, x, y, pipeBodyKey, pipeCapKey) {
+        constructor(game, x, y, params) {
             super(game);
-            this.pipeBody = new Phaser.TileSprite(game, x, y, 52, window.innerHeight, pipeBodyKey);
-            this.pipeCap = new Phaser.Sprite(game, x, y, pipeCapKey);
+            this.pipeBody = new Phaser.TileSprite(game, x, y, 52, window.innerHeight, params.pipeBodyKey);
+            this.pipeCap = new Phaser.Sprite(game, x, y, params.pipeCapKey);
             this.pipeCap.anchor.y = 1;
             this.add(this.pipeBody);
             this.add(this.pipeCap);
