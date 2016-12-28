@@ -51,11 +51,11 @@ namespace Flappy {
             if (this.isStopped) {
                 return;
             }
+            this.stop();
             this.hitSound.play();
             setTimeout(() => {
                 this.dieSound.play();
             }, 300);
-            this.stop();
         }
 
         private calculateAngle(speed: number): number {

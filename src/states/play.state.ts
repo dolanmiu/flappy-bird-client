@@ -8,6 +8,9 @@ namespace Flappy.State {
         private sky: Sky;
         private floor: Floor;
         private pipePool: PipePool;
+        private scoreBoard: ScoreBoard;
+
+        private gameOver: boolean;
 
         public preload(): void {
             this.game.load.spritesheet('bird', 'assets/bird.png', 34, 24);
@@ -46,7 +49,7 @@ namespace Flappy.State {
                 this.pipePool.addPipes(data);
             });
 
-            let g = new ScoreBoard(this.game, 'gameOver', 'scoreBoard');
+            this.scoreBoard = new ScoreBoard(this.game, 'gameOver', 'scoreBoard');
 
             let socket = io.connect(Constants.serverUrl);
             /*socket.on('news', (data) =>  {
@@ -56,12 +59,18 @@ namespace Flappy.State {
         }
 
         public update(): void {
+            if (this.gameOver) {
+                return;
+            }
+
             this.game.physics.arcade.collide(this.bird, this.floor, () => {
                 // this.hitSound.play();
             });
 
             this.game.physics.arcade.overlap(this.bird, this.pipePool.sprites, () => {
+                this.gameOver = true;
                 this.bird.deathSequence();
+                this.scoreBoard.show();
             });
         }
     }

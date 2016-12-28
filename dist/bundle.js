@@ -35,11 +35,11 @@ var Flappy;
             if (this.isStopped) {
                 return;
             }
+            this.stop();
             this.hitSound.play();
             setTimeout(() => {
                 this.dieSound.play();
             }, 300);
-            this.stop();
         }
         calculateAngle(speed) {
             if (speed >= 90) {
@@ -203,14 +203,20 @@ var Flappy;
             this.gameOver = new Phaser.Sprite(game, Flappy.Constants.gameWidth / 2, Flappy.Constants.gameHeight / 2 - 100, gameOverKey);
             this.gameOver.anchor.x = 0.5;
             this.gameOver.anchor.y = 0.5;
+            this.gameOver.alpha = 0;
             this.add(this.gameOver);
             this.scoreBoard = new Phaser.Sprite(game, Flappy.Constants.gameWidth / 2, Flappy.Constants.gameHeight / 2, scoreBoardKey);
             this.scoreBoard.anchor.x = 0.5;
             this.scoreBoard.anchor.y = 0.5;
+            this.scoreBoard.alpha = 0;
             this.add(this.scoreBoard);
             this.fixedToCamera = true;
         }
         show() {
+            this.gameOver.y = Flappy.Constants.gameHeight / 2 - 80;
+            this.game.add.tween(this.gameOver).to({ alpha: 1, y: Flappy.Constants.gameHeight / 2 - 100 }, 700, Phaser.Easing.Exponential.Out, true, 200);
+            this.scoreBoard.y = Flappy.Constants.gameHeight / 2 + 20;
+            this.game.add.tween(this.scoreBoard).to({ alpha: 1, y: Flappy.Constants.gameHeight / 2 }, 700, Phaser.Easing.Exponential.Out, true, 500);
         }
         update() {
             this.gameOver.x = Flappy.Constants.gameWidth / 2;
@@ -271,7 +277,7 @@ var Flappy;
                 $.get(`${Flappy.Constants.serverUrl}/stage?start=2&end=8`, (data) => {
                     this.pipePool.addPipes(data);
                 });
-                let g = new Flappy.ScoreBoard(this.game, 'gameOver', 'scoreBoard');
+                this.scoreBoard = new Flappy.ScoreBoard(this.game, 'gameOver', 'scoreBoard');
                 let socket = io.connect(Flappy.Constants.serverUrl);
                 /*socket.on('news', (data) =>  {
                     console.log(data);
@@ -279,11 +285,16 @@ var Flappy;
                 });*/
             }
             update() {
+                if (this.gameOver) {
+                    return;
+                }
                 this.game.physics.arcade.collide(this.bird, this.floor, () => {
                     // this.hitSound.play();
                 });
                 this.game.physics.arcade.overlap(this.bird, this.pipePool.sprites, () => {
+                    this.gameOver = true;
                     this.bird.deathSequence();
+                    this.scoreBoard.show();
                 });
             }
         }
