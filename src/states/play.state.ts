@@ -42,7 +42,7 @@ namespace Flappy.State {
             this.game.world.setBounds(Flappy.Constants.worldOffset, 0, 9000, Flappy.Constants.gameHeight);
 
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
-            this.game.physics.arcade.gravity.y = 100;
+            this.game.physics.arcade.gravity.y = 2000;
 
             this.sky = new Sky(this.game, 109, 'sky', floorHeight);
 

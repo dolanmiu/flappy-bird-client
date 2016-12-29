@@ -44,6 +44,7 @@ namespace Flappy {
                 this.gameOver.alpha = 0;
                 this.scoreWindow.alpha = 0;
                 this.replayButton.alpha = 0;
+                this.replayButton.inputEnabled = false;
             });
             this.add(this.replayButton);
 
@@ -69,7 +70,10 @@ namespace Flappy {
             });
 
             this.replayButton.y = Constants.gameHeight / 2 + 90;
-            this.game.add.tween(this.replayButton).to({ alpha: 1, y: Constants.gameHeight / 2 + 70 }, 500, Phaser.Easing.Exponential.Out, true, 1500);
+            let replayButtonTween = this.game.add.tween(this.replayButton).to({ alpha: 1, y: Constants.gameHeight / 2 + 70 }, 500, Phaser.Easing.Exponential.Out, true, 1500);
+            replayButtonTween.onComplete.add(() => {
+                this.replayButton.inputEnabled = true;
+            });
         }
 
         public update(): void {

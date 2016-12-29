@@ -1,6 +1,6 @@
 var Flappy;
 (function (Flappy) {
-    const jumpSpeed = 60;
+    const jumpSpeed = 500;
     const jumpTiltAngle = -60;
     class Bird extends Phaser.Sprite {
         constructor(game, x, y, params) {
@@ -21,8 +21,10 @@ var Flappy;
             });
         }
         update() {
-            // console.log(this.body.velocity.y);
-            this.angle = this.calculateAngle(this.body.velocity.y);
+            if (this.body.velocity.y >= 700) {
+                this.body.velocity.y = 700;
+            }
+            //this.angle = this.calculateAngle(this.body.velocity.y);
             this.x += this.game.time.elapsed * this.currentSpeed;
         }
         stop() {
@@ -233,15 +235,13 @@ var Flappy;
             super(game, x, y, key);
             this.anchor.x = 0.5;
             this.originalY = y;
-            this.inputEnabled = true;
+            this.inputEnabled = false;
             this.events.onInputOver.add(() => {
-                this.game.canvas.style.cursor = 'pointer';
                 this.tween = this.game.add.tween(this).to({ y: this.originalY - 5 }, 1000, Phaser.Easing.Linear.None, true, 0, -1, true);
                 this.tint = 0xe8e8e8;
             });
             this.events.onInputOut.add(() => {
                 this.tween.pause();
-                this.game.canvas.style.cursor = 'default';
                 this.game.add.tween(this).to({ y: this.originalY }, 500, Phaser.Easing.Exponential.Out, true);
                 this.tint = 0xffffff;
             });
@@ -275,6 +275,7 @@ var Flappy;
                 this.gameOver.alpha = 0;
                 this.scoreWindow.alpha = 0;
                 this.replayButton.alpha = 0;
+                this.replayButton.inputEnabled = false;
             });
             this.add(this.replayButton);
             this.wooshSound = game.add.audio(params.wooshSoundKey);
@@ -294,7 +295,10 @@ var Flappy;
                 this.wooshSound.play();
             });
             this.replayButton.y = Flappy.Constants.gameHeight / 2 + 90;
-            this.game.add.tween(this.replayButton).to({ alpha: 1, y: Flappy.Constants.gameHeight / 2 + 70 }, 500, Phaser.Easing.Exponential.Out, true, 1500);
+            let replayButtonTween = this.game.add.tween(this.replayButton).to({ alpha: 1, y: Flappy.Constants.gameHeight / 2 + 70 }, 500, Phaser.Easing.Exponential.Out, true, 1500);
+            replayButtonTween.onComplete.add(() => {
+                this.replayButton.inputEnabled = true;
+            });
         }
         update() {
             this.gameOver.x = Flappy.Constants.gameWidth / 2;
@@ -450,7 +454,7 @@ var Flappy;
                 this.game.stage.disableVisibilityChange = true;
                 this.game.world.setBounds(Flappy.Constants.worldOffset, 0, 9000, Flappy.Constants.gameHeight);
                 this.game.physics.startSystem(Phaser.Physics.ARCADE);
-                this.game.physics.arcade.gravity.y = 100;
+                this.game.physics.arcade.gravity.y = 2000;
                 this.sky = new Flappy.Sky(this.game, 109, 'sky', floorHeight);
                 this.pipePool = new Flappy.PipePool(this.game, floorHeight);
                 this.floor = new Flappy.Floor(this.game, floorHeight, 'floor');

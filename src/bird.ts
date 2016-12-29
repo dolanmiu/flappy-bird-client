@@ -1,6 +1,6 @@
 namespace Flappy {
 
-    const jumpSpeed = 60;
+    const jumpSpeed = 500;
     const jumpTiltAngle = -60;
 
     interface IBirdParams {
@@ -41,8 +41,10 @@ namespace Flappy {
         }
 
         public update(): void {
-            // console.log(this.body.velocity.y);
-            this.angle = this.calculateAngle(this.body.velocity.y);
+            if (this.body.velocity.y >= 700) {
+                this.body.velocity.y = 700;
+            }
+            //this.angle = this.calculateAngle(this.body.velocity.y);
             this.x += this.game.time.elapsed * this.currentSpeed;
         }
 
