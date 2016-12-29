@@ -181,8 +181,9 @@ var Flappy;
                 pipeCapKey: params.pipeUpCapKey,
             });
             this.add(this.upPipe);
-            this.pipeHole = new Phaser.Sprite(game, x, y);
-            this.pipeHole.width = this.upPipe.width;
+            this.pipeHole = new Phaser.Sprite(game, x + this.upPipe.width, y);
+            this.pipeHole.width = 1;
+            this.pipeHole.anchor.x = 1;
             this.pipeHole.height = gapSize;
             this.game.physics.enable(this.pipeHole, Phaser.Physics.ARCADE);
             this.pipeHole.body.allowGravity = false;
@@ -238,7 +239,7 @@ var Flappy;
             this.wooshSound = game.add.audio(params.wooshSoundKey);
             this.fixedToCamera = true;
         }
-        show() {
+        show(score) {
             this.gameOver.y = Flappy.Constants.gameHeight / 2 - 80;
             let gameOverTween = this.game.add.tween(this.gameOver).to({ alpha: 1, y: Flappy.Constants.gameHeight / 2 - 100 }, 500, Phaser.Easing.Exponential.Out, true, 500);
             gameOverTween.onStart.add(() => {
@@ -258,6 +259,36 @@ var Flappy;
         }
     }
     Flappy.ScoreBoard = ScoreBoard;
+})(Flappy || (Flappy = {}));
+var Flappy;
+(function (Flappy) {
+    class ScoreCounter extends Phaser.Text {
+        constructor(game) {
+            super(game, Flappy.Constants.gameWidth / 2, 30, '0', { font: '30px flappy', fill: 'white' });
+            this.stroke = 'black';
+            this.strokeThickness = 8;
+            this.anchor.x = 0.5;
+            this.fixedToCamera = true;
+            this.checkPoints = new Map();
+            this.pointSound = this.game.add.audio('point');
+            this.game.add.existing(this);
+        }
+        increment(pipe) {
+            if (this.checkPoints.has(pipe)) {
+                return;
+            }
+            this.checkPoints.set(pipe, true);
+            this.pointSound.play();
+        }
+        update() {
+            this.x = Flappy.Constants.gameWidth / 2;
+            this.text = this.score.toString();
+        }
+        get score() {
+            return this.checkPoints.size;
+        }
+    }
+    Flappy.ScoreCounter = ScoreCounter;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
@@ -321,7 +352,7 @@ var Flappy;
                     scoreBoardKey: 'scoreBoard',
                     wooshSoundKey: 'woosh',
                 });
-                this.pointSound = this.game.add.audio('point');
+                this.scoreCounter = new Flappy.ScoreCounter(this.game);
                 let socket = io.connect(Flappy.Constants.serverUrl);
                 /*socket.on('news', (data) =>  {
                     console.log(data);
@@ -335,15 +366,15 @@ var Flappy;
                 this.game.physics.arcade.collide(this.bird, this.floor, () => {
                     this.gameOver = true;
                     this.bird.deathSequence();
-                    this.scoreBoard.show();
+                    this.scoreBoard.show(this.scoreCounter.score);
                 });
                 this.game.physics.arcade.overlap(this.bird, this.pipePool.sprites, () => {
                     this.gameOver = true;
                     this.bird.deathSequence();
-                    this.scoreBoard.show();
+                    this.scoreBoard.show(this.scoreCounter.score);
                 });
-                this.game.physics.arcade.overlap(this.bird, this.pipePool.holes, () => {
-                    this.pointSound.play();
+                this.game.physics.arcade.overlap(this.bird, this.pipePool.holes, (bird, pipe) => {
+                    this.scoreCounter.increment(pipe);
                 });
             }
         }

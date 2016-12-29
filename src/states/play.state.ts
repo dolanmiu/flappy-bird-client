@@ -9,10 +9,9 @@ namespace Flappy.State {
         private floor: Floor;
         private pipePool: PipePool;
         private scoreBoard: ScoreBoard;
+        private scoreCounter: ScoreCounter;
 
         private gameOver: boolean;
-
-        private pointSound: Phaser.Sound;
 
         public preload(): void {
             this.game.load.spritesheet('bird', 'assets/bird.png', 34, 24);
@@ -65,13 +64,14 @@ namespace Flappy.State {
                 wooshSoundKey: 'woosh',
             });
 
-            this.pointSound = this.game.add.audio('point');
+            this.scoreCounter = new ScoreCounter(this.game);
 
             let socket = io.connect(Constants.serverUrl);
             /*socket.on('news', (data) =>  {
                 console.log(data);
                 socket.emit('my other event', { my: 'data' });
             });*/
+
         }
 
         public update(): void {
@@ -82,17 +82,17 @@ namespace Flappy.State {
             this.game.physics.arcade.collide(this.bird, this.floor, () => {
                 this.gameOver = true;
                 this.bird.deathSequence();
-                this.scoreBoard.show();
+                this.scoreBoard.show(this.scoreCounter.score);
             });
 
             this.game.physics.arcade.overlap(this.bird, this.pipePool.sprites, () => {
                 this.gameOver = true;
                 this.bird.deathSequence();
-                this.scoreBoard.show();
+                this.scoreBoard.show(this.scoreCounter.score);
             });
 
-            this.game.physics.arcade.overlap(this.bird, this.pipePool.holes, () => {
-                this.pointSound.play();
+            this.game.physics.arcade.overlap(this.bird, this.pipePool.holes, (bird: Bird, pipe: Phaser.Sprite) => {
+                this.scoreCounter.increment(pipe);
             });
         }
     }

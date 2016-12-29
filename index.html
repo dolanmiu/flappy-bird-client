@@ -1,36 +1,29 @@
 <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-    <script src="./dist/bundle.js"></script>
     <style>
         body {
             margin: 0;
         }
         
-        #sky-fill {
+        .workaround {
+            font-family: flappy;
+            visibility: hidden; 
             position: fixed;
-            background-color: #4ec0ca;
-            top: 0;
-            height: 67%;
-            width: 100%;
-            z-index: -1;
         }
         
-        #floor-fill {
-            position: fixed;
-            background-color: #ded895;
-            bottom: 0;
-            height: 33%;
-            width: 100%;
-            z-index: -1;
+        @font-face {
+            font-family: "flappy";
+            src: url("./assets/fonts/04b_19.woff2") format('woff2');
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="./dist/bundle.js"></script>
 </head>
 
 <body>
-    <!--<div id="sky-fill"></div>
-    <div id="floor-fill"></div>-->
+    <!-- Workaround: for some reason, fonts will only work if this specific div is there -->
+    <div class="workaround">0</div>
     <div id="game" style="height: 100%"></div>
     <script>
         var game = new Flappy.Game("game");

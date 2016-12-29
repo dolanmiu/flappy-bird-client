@@ -29,7 +29,7 @@ namespace Flappy {
             this.fixedToCamera = true;
         }
 
-        public show(): void {
+        public show(score: number): void {
             this.gameOver.y = Constants.gameHeight / 2 - 80;
             let gameOverTween = this.game.add.tween(this.gameOver).to({ alpha: 1, y: Constants.gameHeight / 2 - 100 }, 500, Phaser.Easing.Exponential.Out, true, 500);
             gameOverTween.onStart.add(() => {

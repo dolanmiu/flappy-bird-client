@@ -19,8 +19,9 @@ namespace Flappy {
             });
             this.add(this.upPipe);
 
-            this.pipeHole = new Phaser.Sprite(game, x, y);
-            this.pipeHole.width = this.upPipe.width;
+            this.pipeHole = new Phaser.Sprite(game, x + this.upPipe.width, y);
+            this.pipeHole.width = 1;
+            this.pipeHole.anchor.x = 1;
             this.pipeHole.height = gapSize;
             this.game.physics.enable(this.pipeHole, Phaser.Physics.ARCADE);
             this.pipeHole.body.allowGravity = false;
