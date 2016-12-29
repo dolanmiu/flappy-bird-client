@@ -236,7 +236,7 @@ var Flappy;
             this.scoreWindow = new Flappy.ScoreWindow(game, {
                 scoreWindowKey: params.scoreBoardKey,
             });
-            //this.scoreWindow.alpha = 0;
+            this.scoreWindow.alpha = 0;
             this.add(this.scoreWindow);
             this.fixedToCamera = true;
         }
