@@ -50,6 +50,10 @@ namespace Flappy {
             this.currentSpeed = 0;
         }
 
+        public restart(): void {
+            this.currentSpeed = Constants.gameSpeed;
+        }
+
         public get isStopped(): boolean {
             return this.currentSpeed === 0;
         }

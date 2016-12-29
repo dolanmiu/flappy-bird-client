@@ -11,8 +11,6 @@ namespace Flappy.State {
         private scoreBoard: ScoreBoard;
         private scoreCounter: ScoreCounter;
 
-        private gameOver: boolean;
-
         public preload(): void {
             this.game.load.spritesheet('bird', 'assets/bird.png', 34, 24);
             this.game.load.image('sky', 'assets/sky.png');
@@ -23,6 +21,11 @@ namespace Flappy.State {
 
             this.game.load.image('gameOver', 'assets/game-over.png');
             this.game.load.image('scoreBoard', 'assets/score-board.png');
+            this.game.load.image('replay', 'assets/replay.png');
+            this.game.load.image('bronzeMedal', 'assets/medal-bronze.png');
+            this.game.load.image('silverMedal', 'assets/medal-silver.png');
+            this.game.load.image('goldMedal', 'assets/medal-gold.png');
+            this.game.load.image('platMedal', 'assets/medal-platinum.png');
 
             this.game.load.audio('wing', 'assets/sounds/sfx_wing.ogg');
             this.game.load.audio('hit', 'assets/sounds/sfx_hit.ogg');
@@ -59,9 +62,18 @@ namespace Flappy.State {
             });
 
             this.scoreBoard = new ScoreBoard(this.game, {
+                bronzeMedalKey: 'bronzeMedal',
                 gameOverKey: 'gameOver',
+                goldMedalKey: 'goldMedal',
+                platinumMedalKey: 'platMedal',
+                replayButtonKey: 'replay',
                 scoreBoardKey: 'scoreBoard',
+                silverMedalKey: 'silverMedal',
                 wooshSoundKey: 'woosh',
+            }, () => {
+                this.bird.reset(100, 100);
+                this.bird.restart();
+                this.scoreCounter.restart();
             });
 
             this.scoreCounter = new ScoreCounter(this.game);
@@ -75,18 +87,16 @@ namespace Flappy.State {
         }
 
         public update(): void {
-            if (this.gameOver) {
+            if (this.scoreBoard.isGameOver) {
                 return;
             }
 
             this.game.physics.arcade.collide(this.bird, this.floor, () => {
-                this.gameOver = true;
                 this.bird.deathSequence();
                 this.scoreBoard.show(this.scoreCounter.score);
             });
 
             this.game.physics.arcade.overlap(this.bird, this.pipePool.sprites, () => {
-                this.gameOver = true;
                 this.bird.deathSequence();
                 this.scoreBoard.show(this.scoreCounter.score);
             });

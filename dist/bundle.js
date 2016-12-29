@@ -28,6 +28,9 @@ var Flappy;
         stop() {
             this.currentSpeed = 0;
         }
+        restart() {
+            this.currentSpeed = Flappy.Constants.gameSpeed;
+        }
         get isStopped() {
             return this.currentSpeed === 0;
         }
@@ -225,22 +228,60 @@ var Flappy;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
+    class ReplayButton extends Phaser.Sprite {
+        constructor(game, x, y, key) {
+            super(game, x, y, key);
+            this.anchor.x = 0.5;
+            this.originalY = y;
+            this.inputEnabled = true;
+            this.events.onInputOver.add(() => {
+                this.game.canvas.style.cursor = 'pointer';
+                this.tween = this.game.add.tween(this).to({ y: this.originalY - 5 }, 1000, Phaser.Easing.Linear.None, true, 0, -1, true);
+                this.tint = 0xe8e8e8;
+            });
+            this.events.onInputOut.add(() => {
+                this.tween.pause();
+                this.game.canvas.style.cursor = 'default';
+                this.game.add.tween(this).to({ y: this.originalY }, 500, Phaser.Easing.Exponential.Out, true);
+                this.tint = 0xffffff;
+            });
+        }
+    }
+    Flappy.ReplayButton = ReplayButton;
+})(Flappy || (Flappy = {}));
+var Flappy;
+(function (Flappy) {
     class ScoreBoard extends Phaser.Group {
-        constructor(game, params) {
+        constructor(game, params, restartGameLambda) {
             super(game);
             this.gameOver = new Phaser.Sprite(game, Flappy.Constants.gameWidth / 2, Flappy.Constants.gameHeight / 2 - 100, params.gameOverKey);
             this.gameOver.anchor.set(0.5, 0.5);
             this.gameOver.alpha = 0;
             this.add(this.gameOver);
-            this.wooshSound = game.add.audio(params.wooshSoundKey);
-            this.scoreWindow = new Flappy.ScoreWindow(game, {
+            this.scoreWindow = new Flappy.ScoreWindow(game, Flappy.Constants.gameWidth / 2, Flappy.Constants.gameHeight / 2, {
+                bronzeMedalKey: params.bronzeMedalKey,
+                goldMedalKey: params.goldMedalKey,
+                platinumMedalKey: params.platinumMedalKey,
                 scoreWindowKey: params.scoreBoardKey,
+                silverMedalKey: params.silverMedalKey,
             });
             this.scoreWindow.alpha = 0;
             this.add(this.scoreWindow);
+            this.replayButton = new Flappy.ReplayButton(game, Flappy.Constants.gameWidth / 2, Flappy.Constants.gameHeight / 2 + 70, params.replayButtonKey);
+            this.replayButton.alpha = 0;
+            this.replayButton.events.onInputDown.add(() => {
+                restartGameLambda();
+                this.gameOverStatus = false;
+                this.gameOver.alpha = 0;
+                this.scoreWindow.alpha = 0;
+                this.replayButton.alpha = 0;
+            });
+            this.add(this.replayButton);
+            this.wooshSound = game.add.audio(params.wooshSoundKey);
             this.fixedToCamera = true;
         }
         show(score) {
+            this.gameOverStatus = true;
             this.scoreWindow.score = score;
             this.gameOver.y = Flappy.Constants.gameHeight / 2 - 80;
             let gameOverTween = this.game.add.tween(this.gameOver).to({ alpha: 1, y: Flappy.Constants.gameHeight / 2 - 100 }, 500, Phaser.Easing.Exponential.Out, true, 500);
@@ -252,12 +293,19 @@ var Flappy;
             scoreBoardTween.onStart.add(() => {
                 this.wooshSound.play();
             });
+            this.replayButton.y = Flappy.Constants.gameHeight / 2 + 90;
+            this.game.add.tween(this.replayButton).to({ alpha: 1, y: Flappy.Constants.gameHeight / 2 + 70 }, 500, Phaser.Easing.Exponential.Out, true, 1500);
         }
         update() {
             this.gameOver.x = Flappy.Constants.gameWidth / 2;
             this.gameOver.y = Flappy.Constants.gameHeight / 2 - 100;
             this.scoreWindow.x = Flappy.Constants.gameWidth / 2;
             this.scoreWindow.y = Flappy.Constants.gameHeight / 2;
+            this.replayButton.x = Flappy.Constants.gameWidth / 2;
+            this.replayButton.y = Flappy.Constants.gameHeight / 2 + 70;
+        }
+        get isGameOver() {
+            return this.gameOverStatus;
         }
     }
     Flappy.ScoreBoard = ScoreBoard;
@@ -265,8 +313,8 @@ var Flappy;
 var Flappy;
 (function (Flappy) {
     class ScoreWindow extends Phaser.Sprite {
-        constructor(game, params) {
-            super(game, 0, 0, params.scoreWindowKey);
+        constructor(game, x, y, params) {
+            super(game, x, y, params.scoreWindowKey);
             this.anchor.set(0.5, 0.5);
             this.highestScore = 0;
             this.currentScore = new Phaser.Text(game, this.width / 2 - 25, -this.height / 2 + 37, '0', { font: '18px flappy', fill: 'white' });
@@ -279,13 +327,44 @@ var Flappy;
             this.bestScore.strokeThickness = 5;
             this.bestScore.anchor.x = 1;
             this.addChild(this.bestScore);
+            this.bronzeMedal = new Phaser.Sprite(game, -this.width / 2 + 31, -this.height / 2 + 49, params.bronzeMedalKey);
+            this.bronzeMedal.visible = false;
+            this.addChild(this.bronzeMedal);
+            this.silverMedal = new Phaser.Sprite(game, -this.width / 2 + 31, -this.height / 2 + 49, params.silverMedalKey);
+            this.silverMedal.visible = false;
+            this.addChild(this.silverMedal);
+            this.goldMedal = new Phaser.Sprite(game, -this.width / 2 + 31, -this.height / 2 + 49, params.goldMedalKey);
+            this.goldMedal.visible = false;
+            this.addChild(this.goldMedal);
+            this.platinumMedal = new Phaser.Sprite(game, -this.width / 2 + 31, -this.height / 2 + 49, params.platinumMedalKey);
+            this.platinumMedal.visible = false;
+            this.addChild(this.platinumMedal);
         }
         set score(score) {
             this.currentScore.text = score.toString();
             if (score > this.highestScore) {
                 this.highestScore = score;
             }
+            this.resetMedalVisibility();
+            if (10 <= score && score < 20) {
+                this.bronzeMedal.visible = true;
+            }
+            else if (20 <= score && score < 30) {
+                this.silverMedal.visible = true;
+            }
+            else if (30 <= score && score < 40) {
+                this.goldMedal.visible = true;
+            }
+            else if (40 <= score) {
+                this.platinumMedal.visible = true;
+            }
             this.bestScore.text = this.highestScore.toString();
+        }
+        resetMedalVisibility() {
+            this.bronzeMedal.visible = false;
+            this.silverMedal.visible = false;
+            this.goldMedal.visible = false;
+            this.platinumMedal.visible = false;
         }
     }
     Flappy.ScoreWindow = ScoreWindow;
@@ -316,6 +395,9 @@ var Flappy;
         }
         get score() {
             return this.checkPoints.size;
+        }
+        restart() {
+            this.checkPoints = new Map();
         }
     }
     Flappy.ScoreCounter = ScoreCounter;
@@ -351,6 +433,11 @@ var Flappy;
                 this.game.load.image('pipeUpCap', 'assets/pipe-up.png');
                 this.game.load.image('gameOver', 'assets/game-over.png');
                 this.game.load.image('scoreBoard', 'assets/score-board.png');
+                this.game.load.image('replay', 'assets/replay.png');
+                this.game.load.image('bronzeMedal', 'assets/medal-bronze.png');
+                this.game.load.image('silverMedal', 'assets/medal-silver.png');
+                this.game.load.image('goldMedal', 'assets/medal-gold.png');
+                this.game.load.image('platMedal', 'assets/medal-platinum.png');
                 this.game.load.audio('wing', 'assets/sounds/sfx_wing.ogg');
                 this.game.load.audio('hit', 'assets/sounds/sfx_hit.ogg');
                 this.game.load.audio('die', 'assets/sounds/sfx_die.ogg');
@@ -378,9 +465,18 @@ var Flappy;
                     this.pipePool.addPipes(data);
                 });
                 this.scoreBoard = new Flappy.ScoreBoard(this.game, {
+                    bronzeMedalKey: 'bronzeMedal',
                     gameOverKey: 'gameOver',
+                    goldMedalKey: 'goldMedal',
+                    platinumMedalKey: 'platMedal',
+                    replayButtonKey: 'replay',
                     scoreBoardKey: 'scoreBoard',
+                    silverMedalKey: 'silverMedal',
                     wooshSoundKey: 'woosh',
+                }, () => {
+                    this.bird.reset(100, 100);
+                    this.bird.restart();
+                    this.scoreCounter.restart();
                 });
                 this.scoreCounter = new Flappy.ScoreCounter(this.game);
                 let socket = io.connect(Flappy.Constants.serverUrl);
@@ -390,16 +486,14 @@ var Flappy;
                 });*/
             }
             update() {
-                if (this.gameOver) {
+                if (this.scoreBoard.isGameOver) {
                     return;
                 }
                 this.game.physics.arcade.collide(this.bird, this.floor, () => {
-                    this.gameOver = true;
                     this.bird.deathSequence();
                     this.scoreBoard.show(this.scoreCounter.score);
                 });
                 this.game.physics.arcade.overlap(this.bird, this.pipePool.sprites, () => {
-                    this.gameOver = true;
                     this.bird.deathSequence();
                     this.scoreBoard.show(this.scoreCounter.score);
                 });

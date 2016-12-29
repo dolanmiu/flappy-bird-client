@@ -35,5 +35,9 @@ namespace Flappy {
         public get score(): number {
             return this.checkPoints.size;
         }
+
+        public restart(): void {
+            this.checkPoints = new Map<Phaser.Sprite, boolean>();
+        }
     }
 }
