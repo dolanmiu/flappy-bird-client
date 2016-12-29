@@ -232,21 +232,23 @@ var Flappy;
             this.gameOver.anchor.set(0.5, 0.5);
             this.gameOver.alpha = 0;
             this.add(this.gameOver);
-            this.scoreBoard = new Phaser.Sprite(game, Flappy.Constants.gameWidth / 2, Flappy.Constants.gameHeight / 2, params.scoreBoardKey);
-            this.scoreBoard.anchor.set(0.5, 0.5);
-            this.scoreBoard.alpha = 0;
-            this.add(this.scoreBoard);
             this.wooshSound = game.add.audio(params.wooshSoundKey);
+            this.scoreWindow = new Flappy.ScoreWindow(game, {
+                scoreWindowKey: params.scoreBoardKey,
+            });
+            //this.scoreWindow.alpha = 0;
+            this.add(this.scoreWindow);
             this.fixedToCamera = true;
         }
         show(score) {
+            this.scoreWindow.score = score;
             this.gameOver.y = Flappy.Constants.gameHeight / 2 - 80;
             let gameOverTween = this.game.add.tween(this.gameOver).to({ alpha: 1, y: Flappy.Constants.gameHeight / 2 - 100 }, 500, Phaser.Easing.Exponential.Out, true, 500);
             gameOverTween.onStart.add(() => {
                 this.wooshSound.play();
             });
-            this.scoreBoard.y = Flappy.Constants.gameHeight / 2 + 20;
-            let scoreBoardTween = this.game.add.tween(this.scoreBoard).to({ alpha: 1, y: Flappy.Constants.gameHeight / 2 }, 500, Phaser.Easing.Exponential.Out, true, 1500);
+            this.scoreWindow.y = Flappy.Constants.gameHeight / 2 + 20;
+            let scoreBoardTween = this.game.add.tween(this.scoreWindow).to({ alpha: 1, y: Flappy.Constants.gameHeight / 2 }, 500, Phaser.Easing.Exponential.Out, true, 1500);
             scoreBoardTween.onStart.add(() => {
                 this.wooshSound.play();
             });
@@ -254,11 +256,39 @@ var Flappy;
         update() {
             this.gameOver.x = Flappy.Constants.gameWidth / 2;
             this.gameOver.y = Flappy.Constants.gameHeight / 2 - 100;
-            this.scoreBoard.x = Flappy.Constants.gameWidth / 2;
-            this.scoreBoard.y = Flappy.Constants.gameHeight / 2;
+            this.scoreWindow.x = Flappy.Constants.gameWidth / 2;
+            this.scoreWindow.y = Flappy.Constants.gameHeight / 2;
         }
     }
     Flappy.ScoreBoard = ScoreBoard;
+})(Flappy || (Flappy = {}));
+var Flappy;
+(function (Flappy) {
+    class ScoreWindow extends Phaser.Sprite {
+        constructor(game, params) {
+            super(game, 0, 0, params.scoreWindowKey);
+            this.anchor.set(0.5, 0.5);
+            this.highestScore = 0;
+            this.currentScore = new Phaser.Text(game, this.width / 2 - 25, -this.height / 2 + 37, '0', { font: '18px flappy', fill: 'white' });
+            this.currentScore.stroke = 'black';
+            this.currentScore.strokeThickness = 5;
+            this.currentScore.anchor.x = 1;
+            this.addChild(this.currentScore);
+            this.bestScore = new Phaser.Text(game, this.width / 2 - 25, -this.height / 2 + 78, '0', { font: '18px flappy', fill: 'white' });
+            this.bestScore.stroke = 'black';
+            this.bestScore.strokeThickness = 5;
+            this.bestScore.anchor.x = 1;
+            this.addChild(this.bestScore);
+        }
+        set score(score) {
+            this.currentScore.text = score.toString();
+            if (score > this.highestScore) {
+                this.highestScore = score;
+            }
+            this.bestScore.text = this.highestScore.toString();
+        }
+    }
+    Flappy.ScoreWindow = ScoreWindow;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
