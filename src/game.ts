@@ -12,7 +12,7 @@ namespace Flappy {
         }
 
         public connect(name: string, callback: () => {}): void {
-            Global.socket = io.connect(Constants.serverUrl);
+            Global.socket = io.connect(Constants.serverUrl, { query: `name=${name}` });
             Global.socket.on('connect', () => {
                 this.state.start('play');
                 callback();

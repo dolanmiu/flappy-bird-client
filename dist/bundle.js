@@ -62,18 +62,9 @@ var Flappy;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
-    class Constants {
-        static get gameWidth() {
-            let ratio = this.gameHeight / window.innerHeight;
-            return window.innerWidth * ratio;
-        }
+    class MultiplayerBird {
     }
-    Constants.gameSpeed = 0.1;
-    Constants.gapSize = 200;
-    Constants.serverUrl = 'http://localhost:9001';
-    Constants.gameHeight = 665;
-    Constants.worldOffset = -1000;
-    Flappy.Constants = Constants;
+    Flappy.MultiplayerBird = MultiplayerBird;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
@@ -105,7 +96,7 @@ var Flappy;
             });
         }
         connect(name, callback) {
-            Flappy.Global.socket = io.connect(Flappy.Constants.serverUrl);
+            Flappy.Global.socket = io.connect(Flappy.Constants.serverUrl, { query: `name=${name}` });
             Flappy.Global.socket.on('connect', () => {
                 this.state.start('play');
                 callback();
@@ -113,6 +104,21 @@ var Flappy;
         }
     }
     Flappy.Game = Game;
+})(Flappy || (Flappy = {}));
+var Flappy;
+(function (Flappy) {
+    class Constants {
+        static get gameWidth() {
+            let ratio = this.gameHeight / window.innerHeight;
+            return window.innerWidth * ratio;
+        }
+    }
+    Constants.gameSpeed = 0.1;
+    Constants.gapSize = 200;
+    Constants.serverUrl = 'http://localhost:9001';
+    Constants.gameHeight = 665;
+    Constants.worldOffset = -1000;
+    Flappy.Constants = Constants;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
