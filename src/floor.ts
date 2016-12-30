@@ -2,7 +2,7 @@ namespace Flappy {
     export class Floor extends Phaser.TileSprite {
 
         constructor(game: Phaser.Game, height: number, key: string) {
-            super(game, Flappy.Constants.worldOffset, Flappy.Constants.gameHeight, Flappy.Constants.gameWidth, height, key);
+            super(game, Global.Constants.worldOffset, Global.Constants.gameHeight, Global.Constants.gameWidth, height, key);
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.body.immovable = true;
             this.body.allowGravity = false;

@@ -14,9 +14,9 @@ namespace Flappy {
 
         public addPipes(pipes: Array<IPipe>): void {
             for (let pipe of pipes) {
-                let availableHeight = Flappy.Constants.gameHeight - this.floorHeight - Flappy.Constants.gapSize;
+                let availableHeight = Global.Constants.gameHeight - this.floorHeight - Global.Constants.gapSize;
                 let adjustedLocation = this.map(pipe.location, 0, 1, 0.1, 0.9);
-                this.create(pipe.index * Flappy.Constants.gapSize, adjustedLocation * availableHeight);
+                this.create(pipe.index * Global.Constants.gapSize, adjustedLocation * availableHeight);
             }
         }
 
@@ -25,7 +25,7 @@ namespace Flappy {
             let obj = this.getFirstExists(false);
             if (!obj) {
                 // We failed to find an availble child, so we create one now and add it to the pool.
-                obj = new PipeSet(this.game, x, y, Constants.gapSize, {
+                obj = new PipeSet(this.game, x, y, Global.Constants.gapSize, {
                     pipeBodyKey: 'pipeBody',
                     pipeDownCapKey: 'pipeDownCap',
                     pipeUpCapKey: 'pipeUpCap',

@@ -1,25 +1,47 @@
 var Flappy;
 (function (Flappy) {
-    const jumpSpeed = 500;
     const jumpTiltAngle = -60;
-    class Bird extends Phaser.Sprite {
+    class BaseBird extends Phaser.Sprite {
         constructor(game, x, y, params) {
             super(game, x, y, params.key);
-            this.currentSpeed = Flappy.Constants.gameSpeed;
+            this.currentSpeed = Flappy.Global.Constants.gameSpeed;
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.game.add.existing(this);
             this.animations.add('fly');
             this.animations.play('fly', 3, true);
             this.anchor.set(0.5, 0.5);
-            this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
             this.hitSound = this.game.add.audio(params.hitSoundKey);
             this.dieSound = this.game.add.audio(params.dieSoundKey);
-            let wingSound = this.game.add.audio(params.windSoundKey);
-            this.spaceKey.onDown.add(() => {
+        }
+        stop() {
+            this.currentSpeed = 0;
+        }
+        restart() {
+            this.currentSpeed = Flappy.Global.Constants.gameSpeed;
+        }
+        get isStopped() {
+            return this.currentSpeed === 0;
+        }
+        calculateAngle(speed) {
+            if (speed >= 90) {
+                return 90;
+            }
+            return speed;
+        }
+    }
+    Flappy.BaseBird = BaseBird;
+})(Flappy || (Flappy = {}));
+var Flappy;
+(function (Flappy) {
+    class Bird extends Flappy.BaseBird {
+        constructor(game, x, y, params) {
+            super(game, x, y, params);
+            game.input.mouse.onMouseDown = () => {
                 Flappy.Global.socket.emit('jump');
-                this.body.velocity.y = -jumpSpeed;
+                this.body.velocity.y = -Flappy.Global.Constants.jumpSpeed;
                 wingSound.play();
-            });
+            };
+            let wingSound = this.game.add.audio(params.windSoundKey);
         }
         update() {
             if (this.body.velocity.y >= 700) {
@@ -32,15 +54,6 @@ var Flappy;
                 y: this.y,
             });
         }
-        stop() {
-            this.currentSpeed = 0;
-        }
-        restart() {
-            this.currentSpeed = Flappy.Constants.gameSpeed;
-        }
-        get isStopped() {
-            return this.currentSpeed === 0;
-        }
         deathSequence() {
             if (this.isStopped) {
                 return;
@@ -50,12 +63,6 @@ var Flappy;
             setTimeout(() => {
                 this.dieSound.play();
             }, 300);
-        }
-        calculateAngle(speed) {
-            if (speed >= 90) {
-                return 90;
-            }
-            return speed;
         }
     }
     Flappy.Bird = Bird;
@@ -70,7 +77,7 @@ var Flappy;
 (function (Flappy) {
     class Floor extends Phaser.TileSprite {
         constructor(game, height, key) {
-            super(game, Flappy.Constants.worldOffset, Flappy.Constants.gameHeight, Flappy.Constants.gameWidth, height, key);
+            super(game, Flappy.Global.Constants.worldOffset, Flappy.Global.Constants.gameHeight, Flappy.Global.Constants.gameWidth, height, key);
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.body.immovable = true;
             this.body.allowGravity = false;
@@ -89,14 +96,14 @@ var Flappy;
     class Game extends Phaser.Game {
         constructor(elementName) {
             let element = document.getElementById(elementName);
-            super(Flappy.Constants.gameWidth, Flappy.Constants.gameHeight, Phaser.AUTO, element.id, Flappy.State.Blank, false, false);
+            super(Flappy.Global.Constants.gameWidth, Flappy.Global.Constants.gameHeight, Phaser.AUTO, element.id, Flappy.State.Blank, false, false);
             this.state.add('play', Flappy.State.Play);
             window.addEventListener('resize', (myFunction) => {
-                this.scale.setGameSize(Flappy.Constants.gameWidth, Flappy.Constants.gameHeight);
+                this.scale.setGameSize(Flappy.Global.Constants.gameWidth, Flappy.Global.Constants.gameHeight);
             });
         }
         connect(name, callback) {
-            Flappy.Global.socket = io.connect(Flappy.Constants.serverUrl, { query: `name=${name}` });
+            Flappy.Global.socket = io.connect(Flappy.Global.Constants.serverUrl, { query: `name=${name}` });
             Flappy.Global.socket.on('connect', () => {
                 this.state.start('play');
                 callback();
@@ -107,24 +114,29 @@ var Flappy;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
-    class Constants {
-        static get gameWidth() {
-            let ratio = this.gameHeight / window.innerHeight;
-            return window.innerWidth * ratio;
+    var Global;
+    (function (Global) {
+        class Constants {
+            static get gameWidth() {
+                let ratio = this.gameHeight / window.innerHeight;
+                return window.innerWidth * ratio;
+            }
         }
-    }
-    Constants.gameSpeed = 0.1;
-    Constants.gapSize = 200;
-    Constants.serverUrl = 'http://localhost:9001';
-    Constants.gameHeight = 665;
-    Constants.worldOffset = -1000;
-    Flappy.Constants = Constants;
+        Constants.gameSpeed = 0.1;
+        Constants.jumpSpeed = 500;
+        Constants.gapSize = 200;
+        Constants.gravity = 2000;
+        Constants.serverUrl = 'http://localhost:9001';
+        Constants.gameHeight = 665;
+        Constants.worldOffset = -1000;
+        Global.Constants = Constants;
+    })(Global = Flappy.Global || (Flappy.Global = {}));
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
-    class Global {
-    }
-    Flappy.Global = Global;
+    var Global;
+    (function (Global) {
+    })(Global = Flappy.Global || (Flappy.Global = {}));
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
@@ -157,9 +169,9 @@ var Flappy;
         }
         addPipes(pipes) {
             for (let pipe of pipes) {
-                let availableHeight = Flappy.Constants.gameHeight - this.floorHeight - Flappy.Constants.gapSize;
+                let availableHeight = Flappy.Global.Constants.gameHeight - this.floorHeight - Flappy.Global.Constants.gapSize;
                 let adjustedLocation = this.map(pipe.location, 0, 1, 0.1, 0.9);
-                this.create(pipe.index * Flappy.Constants.gapSize, adjustedLocation * availableHeight);
+                this.create(pipe.index * Flappy.Global.Constants.gapSize, adjustedLocation * availableHeight);
             }
         }
         create(x, y) {
@@ -167,7 +179,7 @@ var Flappy;
             let obj = this.getFirstExists(false);
             if (!obj) {
                 // We failed to find an availble child, so we create one now and add it to the pool.
-                obj = new Flappy.PipeSet(this.game, x, y, Flappy.Constants.gapSize, {
+                obj = new Flappy.PipeSet(this.game, x, y, Flappy.Global.Constants.gapSize, {
                     pipeBodyKey: 'pipeBody',
                     pipeDownCapKey: 'pipeDownCap',
                     pipeUpCapKey: 'pipeUpCap',
@@ -279,11 +291,11 @@ var Flappy;
     class ScoreBoard extends Phaser.Group {
         constructor(game, params, restartGameLambda) {
             super(game);
-            this.gameOver = new Phaser.Sprite(game, Flappy.Constants.gameWidth / 2, Flappy.Constants.gameHeight / 2 - 100, params.gameOverKey);
+            this.gameOver = new Phaser.Sprite(game, Flappy.Global.Constants.gameWidth / 2, Flappy.Global.Constants.gameHeight / 2 - 100, params.gameOverKey);
             this.gameOver.anchor.set(0.5, 0.5);
             this.gameOver.alpha = 0;
             this.add(this.gameOver);
-            this.scoreWindow = new Flappy.ScoreWindow(game, Flappy.Constants.gameWidth / 2, Flappy.Constants.gameHeight / 2, {
+            this.scoreWindow = new Flappy.ScoreWindow(game, Flappy.Global.Constants.gameWidth / 2, Flappy.Global.Constants.gameHeight / 2, {
                 bronzeMedalKey: params.bronzeMedalKey,
                 goldMedalKey: params.goldMedalKey,
                 platinumMedalKey: params.platinumMedalKey,
@@ -292,7 +304,7 @@ var Flappy;
             });
             this.scoreWindow.alpha = 0;
             this.add(this.scoreWindow);
-            this.replayButton = new Flappy.ReplayButton(game, Flappy.Constants.gameWidth / 2, Flappy.Constants.gameHeight / 2 + 70, params.replayButtonKey);
+            this.replayButton = new Flappy.ReplayButton(game, Flappy.Global.Constants.gameWidth / 2, Flappy.Global.Constants.gameHeight / 2 + 70, params.replayButtonKey);
             this.replayButton.alpha = 0;
             this.replayButton.events.onInputDown.add(() => {
                 restartGameLambda();
@@ -309,29 +321,29 @@ var Flappy;
         show(score) {
             this.gameOverStatus = true;
             this.scoreWindow.score = score;
-            this.gameOver.y = Flappy.Constants.gameHeight / 2 - 80;
-            let gameOverTween = this.game.add.tween(this.gameOver).to({ alpha: 1, y: Flappy.Constants.gameHeight / 2 - 100 }, 500, Phaser.Easing.Exponential.Out, true, 500);
+            this.gameOver.y = Flappy.Global.Constants.gameHeight / 2 - 80;
+            let gameOverTween = this.game.add.tween(this.gameOver).to({ alpha: 1, y: Flappy.Global.Constants.gameHeight / 2 - 100 }, 500, Phaser.Easing.Exponential.Out, true, 500);
             gameOverTween.onStart.add(() => {
                 this.wooshSound.play();
             });
-            this.scoreWindow.y = Flappy.Constants.gameHeight / 2 + 20;
-            let scoreBoardTween = this.game.add.tween(this.scoreWindow).to({ alpha: 1, y: Flappy.Constants.gameHeight / 2 }, 500, Phaser.Easing.Exponential.Out, true, 1500);
+            this.scoreWindow.y = Flappy.Global.Constants.gameHeight / 2 + 20;
+            let scoreBoardTween = this.game.add.tween(this.scoreWindow).to({ alpha: 1, y: Flappy.Global.Constants.gameHeight / 2 }, 500, Phaser.Easing.Exponential.Out, true, 1500);
             scoreBoardTween.onStart.add(() => {
                 this.wooshSound.play();
             });
-            this.replayButton.y = Flappy.Constants.gameHeight / 2 + 90;
-            let replayButtonTween = this.game.add.tween(this.replayButton).to({ alpha: 1, y: Flappy.Constants.gameHeight / 2 + 70 }, 500, Phaser.Easing.Exponential.Out, true, 1500);
+            this.replayButton.y = Flappy.Global.Constants.gameHeight / 2 + 90;
+            let replayButtonTween = this.game.add.tween(this.replayButton).to({ alpha: 1, y: Flappy.Global.Constants.gameHeight / 2 + 70 }, 500, Phaser.Easing.Exponential.Out, true, 1500);
             replayButtonTween.onComplete.add(() => {
                 this.replayButton.inputEnabled = true;
             });
         }
         update() {
-            this.gameOver.x = Flappy.Constants.gameWidth / 2;
-            this.gameOver.y = Flappy.Constants.gameHeight / 2 - 100;
-            this.scoreWindow.x = Flappy.Constants.gameWidth / 2;
-            this.scoreWindow.y = Flappy.Constants.gameHeight / 2;
-            this.replayButton.x = Flappy.Constants.gameWidth / 2;
-            this.replayButton.y = Flappy.Constants.gameHeight / 2 + 70;
+            this.gameOver.x = Flappy.Global.Constants.gameWidth / 2;
+            this.gameOver.y = Flappy.Global.Constants.gameHeight / 2 - 100;
+            this.scoreWindow.x = Flappy.Global.Constants.gameWidth / 2;
+            this.scoreWindow.y = Flappy.Global.Constants.gameHeight / 2;
+            this.replayButton.x = Flappy.Global.Constants.gameWidth / 2;
+            this.replayButton.y = Flappy.Global.Constants.gameHeight / 2 + 70;
         }
         get isGameOver() {
             return this.gameOverStatus;
@@ -402,7 +414,7 @@ var Flappy;
 (function (Flappy) {
     class ScoreCounter extends Phaser.Text {
         constructor(game) {
-            super(game, Flappy.Constants.gameWidth / 2, 30, '0', { font: '30px flappy', fill: 'white' });
+            super(game, Flappy.Global.Constants.gameWidth / 2, 30, '0', { font: '30px flappy', fill: 'white' });
             this.stroke = 'black';
             this.strokeThickness = 8;
             this.anchor.x = 0.5;
@@ -419,7 +431,7 @@ var Flappy;
             this.pointSound.play();
         }
         update() {
-            this.x = Flappy.Constants.gameWidth / 2;
+            this.x = Flappy.Global.Constants.gameWidth / 2;
             this.text = this.score.toString();
         }
         get score() {
@@ -435,13 +447,13 @@ var Flappy;
 (function (Flappy) {
     class Sky extends Phaser.TileSprite {
         constructor(game, height, key, offset) {
-            super(game, 0, Flappy.Constants.gameHeight - offset, Flappy.Constants.gameWidth, height, key);
+            super(game, 0, Flappy.Global.Constants.gameHeight - offset, Flappy.Global.Constants.gameWidth, height, key);
             this.fixedToCamera = true;
             this.anchor.y = 1;
             this.game.add.existing(this);
         }
         update() {
-            this.width = Flappy.Constants.gameWidth;
+            this.width = Flappy.Global.Constants.gameWidth;
             // this.tilePosition.x -= 0.1;
         }
     }
@@ -465,7 +477,7 @@ var Flappy;
                 this.sky = new Flappy.Sky(this.game, 109, 'sky', floorHeight);
             }
             update() {
-                this.game.world.width = Flappy.Constants.gameWidth;
+                this.game.world.width = Flappy.Global.Constants.gameWidth;
                 this.floor.x = 0;
             }
         }
@@ -502,9 +514,9 @@ var Flappy;
                 this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
                 this.game.stage.backgroundColor = '#4ec0ca';
                 this.game.stage.disableVisibilityChange = true;
-                this.game.world.setBounds(Flappy.Constants.worldOffset, 0, 9000, Flappy.Constants.gameHeight);
+                this.game.world.setBounds(Flappy.Global.Constants.worldOffset, 0, 9000, Flappy.Global.Constants.gameHeight);
                 this.game.physics.startSystem(Phaser.Physics.ARCADE);
-                this.game.physics.arcade.gravity.y = 2000;
+                this.game.physics.arcade.gravity.y = Flappy.Global.Constants.gravity;
                 this.sky = new Flappy.Sky(this.game, 109, 'sky', floorHeight);
                 this.pipePool = new Flappy.PipePool(this.game, floorHeight);
                 this.floor = new Flappy.Floor(this.game, floorHeight, 'floor');
@@ -515,7 +527,7 @@ var Flappy;
                     windSoundKey: 'wing',
                 });
                 this.game.camera.follow(this.bird, Phaser.Camera.FOLLOW_PLATFORMER);
-                $.get(`${Flappy.Constants.serverUrl}/stage?start=2&end=8`, (data) => {
+                $.get(`${Flappy.Global.Constants.serverUrl}/stage?start=2&end=8`, (data) => {
                     this.pipePool.addPipes(data);
                 });
                 this.scoreBoard = new Flappy.ScoreBoard(this.game, {

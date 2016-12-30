@@ -1,44 +1,16 @@
 namespace Flappy {
-
-    const jumpSpeed = 500;
-    const jumpTiltAngle = -60;
-
-    interface IBirdParams {
-        key: string;
-        hitSoundKey: string;
-        dieSoundKey: string;
-        windSoundKey: string;
-    }
-
-    export class Bird extends Phaser.Sprite {
-
-        private spaceKey: Phaser.Key;
-        private currentSpeed: number;
-
-        private hitSound: Phaser.Sound;
-        private dieSound: Phaser.Sound;
+    export class Bird extends BaseBird {
 
         constructor(game: Phaser.Game, x: number, y: number, params: IBirdParams) {
-            super(game, x, y, params.key);
+            super(game, x, y, params);
 
-            this.currentSpeed = Constants.gameSpeed;
-            this.game.physics.enable(this, Phaser.Physics.ARCADE);
-            this.game.add.existing(this);
-
-            this.animations.add('fly');
-            this.animations.play('fly', 3, true);
-            this.anchor.set(0.5, 0.5);
-            this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
-
-            this.hitSound = this.game.add.audio(params.hitSoundKey);
-            this.dieSound = this.game.add.audio(params.dieSoundKey);
-            let wingSound = this.game.add.audio(params.windSoundKey);
-
-            this.spaceKey.onDown.add(() => {
+            game.input.mouse.onMouseDown = () => {
                 Global.socket.emit('jump');
-                this.body.velocity.y = -jumpSpeed;
+                this.body.velocity.y = -Global.Constants.jumpSpeed;
                 wingSound.play();
-            });
+            };
+
+            let wingSound = this.game.add.audio(params.windSoundKey);
         }
 
         public update(): void {
@@ -53,18 +25,6 @@ namespace Flappy {
             });
         }
 
-        public stop(): void {
-            this.currentSpeed = 0;
-        }
-
-        public restart(): void {
-            this.currentSpeed = Constants.gameSpeed;
-        }
-
-        public get isStopped(): boolean {
-            return this.currentSpeed === 0;
-        }
-
         public deathSequence(): void {
             if (this.isStopped) {
                 return;
@@ -75,13 +35,5 @@ namespace Flappy {
                 this.dieSound.play();
             }, 300);
         }
-
-        private calculateAngle(speed: number): number {
-            if (speed >= 90) {
-                return 90;
-            }
-            return speed;
-        }
-
     }
 }

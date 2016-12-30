@@ -39,10 +39,10 @@ namespace Flappy.State {
             this.game.stage.backgroundColor = '#4ec0ca';
             this.game.stage.disableVisibilityChange = true;
 
-            this.game.world.setBounds(Flappy.Constants.worldOffset, 0, 9000, Flappy.Constants.gameHeight);
+            this.game.world.setBounds(Global.Constants.worldOffset, 0, 9000, Global.Constants.gameHeight);
 
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
-            this.game.physics.arcade.gravity.y = 2000;
+            this.game.physics.arcade.gravity.y = Global.Constants.gravity;
 
             this.sky = new Sky(this.game, 109, 'sky', floorHeight);
 
@@ -57,7 +57,7 @@ namespace Flappy.State {
 
             this.game.camera.follow(this.bird, Phaser.Camera.FOLLOW_PLATFORMER);
 
-            $.get(`${Flappy.Constants.serverUrl}/stage?start=2&end=8`, (data) => {
+            $.get(`${Global.Constants.serverUrl}/stage?start=2&end=8`, (data) => {
                 this.pipePool.addPipes(data);
             });
 

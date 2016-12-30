@@ -23,7 +23,7 @@ namespace Flappy.State {
         }
 
         public update(): void {
-            this.game.world.width = Flappy.Constants.gameWidth;
+            this.game.world.width = Global.Constants.gameWidth;
             this.floor.x = 0;
         }
     }

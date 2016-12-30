@@ -5,7 +5,7 @@ namespace Flappy {
         private pointSound: Phaser.Sound;
 
         constructor(game: Phaser.Game) {
-            super(game, Constants.gameWidth / 2, 30, '0', { font: '30px flappy', fill: 'white' });
+            super(game, Global.Constants.gameWidth / 2, 30, '0', { font: '30px flappy', fill: 'white' });
 
             this.stroke = 'black';
             this.strokeThickness = 8;
@@ -28,7 +28,7 @@ namespace Flappy {
         }
 
         public update(): void {
-            this.x = Constants.gameWidth / 2;
+            this.x = Global.Constants.gameWidth / 2;
             this.text = this.score.toString();
         }
 

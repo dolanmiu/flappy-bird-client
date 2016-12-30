@@ -1,5 +1,3 @@
-namespace Flappy {
-    export class Global {
-        public static socket: SocketIOClient.Socket;
-    }
+namespace Flappy.Global {
+    export let socket: SocketIOClient.Socket;
 }
