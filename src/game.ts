@@ -12,8 +12,8 @@ namespace Flappy {
         }
 
         public connect(name: string, callback: () => {}): void {
-            let socket = io.connect(Constants.serverUrl);
-            socket.on('connect', () => {
+            Global.socket = io.connect(Constants.serverUrl);
+            Global.socket.on('connect', () => {
                 this.state.start('play');
                 callback();
             });

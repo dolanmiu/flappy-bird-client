@@ -16,6 +16,7 @@ var Flappy;
             this.dieSound = this.game.add.audio(params.dieSoundKey);
             let wingSound = this.game.add.audio(params.windSoundKey);
             this.spaceKey.onDown.add(() => {
+                Flappy.Global.socket.emit('jump');
                 this.body.velocity.y = -jumpSpeed;
                 wingSound.play();
             });
@@ -26,6 +27,10 @@ var Flappy;
             }
             // this.angle = this.calculateAngle(this.body.velocity.y);
             this.x += this.game.time.elapsed * this.currentSpeed;
+            Flappy.Global.socket.emit('position', {
+                x: this.x,
+                y: this.y,
+            });
         }
         stop() {
             this.currentSpeed = 0;
@@ -100,14 +105,20 @@ var Flappy;
             });
         }
         connect(name, callback) {
-            let socket = io.connect(Flappy.Constants.serverUrl);
-            socket.on('connect', () => {
+            Flappy.Global.socket = io.connect(Flappy.Constants.serverUrl);
+            Flappy.Global.socket.on('connect', () => {
                 this.state.start('play');
                 callback();
             });
         }
     }
     Flappy.Game = Game;
+})(Flappy || (Flappy = {}));
+var Flappy;
+(function (Flappy) {
+    class Global {
+    }
+    Flappy.Global = Global;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {

@@ -35,6 +35,7 @@ namespace Flappy {
             let wingSound = this.game.add.audio(params.windSoundKey);
 
             this.spaceKey.onDown.add(() => {
+                Global.socket.emit('jump');
                 this.body.velocity.y = -jumpSpeed;
                 wingSound.play();
             });
@@ -46,6 +47,10 @@ namespace Flappy {
             }
             // this.angle = this.calculateAngle(this.body.velocity.y);
             this.x += this.game.time.elapsed * this.currentSpeed;
+            Global.socket.emit('position', {
+                x: this.x,
+                y: this.y,
+            });
         }
 
         public stop(): void {
