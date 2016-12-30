@@ -1,5 +1,5 @@
 namespace Flappy {
-    export class MultiplayerBird {
+    export class MultiplayerBird extends BaseBird {
 
     }
 }

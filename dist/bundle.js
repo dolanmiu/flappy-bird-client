@@ -12,6 +12,7 @@ var Flappy;
             this.anchor.set(0.5, 0.5);
             this.hitSound = this.game.add.audio(params.hitSoundKey);
             this.dieSound = this.game.add.audio(params.dieSoundKey);
+            this.wingSound = this.game.add.audio(params.windSoundKey);
         }
         stop() {
             this.currentSpeed = 0;
@@ -19,8 +20,29 @@ var Flappy;
         restart() {
             this.currentSpeed = Flappy.Global.Constants.gameSpeed;
         }
+        jump() {
+            this.body.velocity.y = -Flappy.Global.Constants.jumpSpeed;
+            this.wingSound.play();
+        }
         get isStopped() {
             return this.currentSpeed === 0;
+        }
+        deathSequence() {
+            if (this.isStopped) {
+                return;
+            }
+            this.stop();
+            this.hitSound.play();
+            setTimeout(() => {
+                this.dieSound.play();
+            }, 300);
+        }
+        update() {
+            if (this.body.velocity.y >= 700) {
+                this.body.velocity.y = 700;
+            }
+            // this.angle = this.calculateAngle(this.body.velocity.y);
+            this.x += this.game.time.elapsed * this.currentSpeed;
         }
         calculateAngle(speed) {
             if (speed >= 90) {
@@ -38,38 +60,22 @@ var Flappy;
             super(game, x, y, params);
             game.input.mouse.onMouseDown = () => {
                 Flappy.Global.socket.emit('jump');
-                this.body.velocity.y = -Flappy.Global.Constants.jumpSpeed;
-                wingSound.play();
+                this.jump();
             };
-            let wingSound = this.game.add.audio(params.windSoundKey);
         }
         update() {
-            if (this.body.velocity.y >= 700) {
-                this.body.velocity.y = 700;
-            }
-            // this.angle = this.calculateAngle(this.body.velocity.y);
-            this.x += this.game.time.elapsed * this.currentSpeed;
+            super.update();
             Flappy.Global.socket.emit('position', {
                 x: this.x,
                 y: this.y,
             });
-        }
-        deathSequence() {
-            if (this.isStopped) {
-                return;
-            }
-            this.stop();
-            this.hitSound.play();
-            setTimeout(() => {
-                this.dieSound.play();
-            }, 300);
         }
     }
     Flappy.Bird = Bird;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
-    class MultiplayerBird {
+    class MultiplayerBird extends Flappy.BaseBird {
     }
     Flappy.MultiplayerBird = MultiplayerBird;
 })(Flappy || (Flappy = {}));
