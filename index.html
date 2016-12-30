@@ -14,6 +14,11 @@
             font-family: "flappy";
             src: url("./assets/fonts/04b_19.woff2") format('woff2');
         }
+
+        .form-container {
+            position: absolute;
+            width: 100%;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -24,22 +29,24 @@
 </head>
 
 <body>
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Flappy Bird Online</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group row">
-                        <label for="example-text-input" class="col-xs-2 col-form-label">Name</label>
-                        <div class="col-xs-10">
-                            <input class="form-control" type="text" placeholder="Player">
-                            <small class="form-text text-muted">The name of which other players will see you as.</small>
-                        </div>
+    <div id="login-form" class="form-container">
+        <div class="container">
+            <div class="mt-3 mb-3">
+                <div class="form-group row">
+                    <div class="col-xs-6 offset-xs-3">
+                        <img class="img-fluid" src="./assets/form/flappy-bird-logo.png">
                     </div>
                 </div>
-                <div class="modal-footer">
+            </div>
+            <div class="form-group row">
+                <label for="example-text-input" class="col-xs-2 col-form-label">Name</label>
+                <div class="col-xs-10">
+                    <input class="form-control" type="text" placeholder="Player">
+                    <small class="form-text text-muted">The name of which other players will see you as.</small>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-xs-10 offset-xs-2">
                     <button type="button" class="btn btn-primary" onclick="connect();">Connect</button>
                 </div>
             </div>
@@ -53,14 +60,10 @@
 
     <script>
         var game = new Flappy.Game("game");
-        $('#myModal').modal({
-            backdrop: 'static',
-            keyboard: false,
-            show: true,
-        });
         function connect(name) {
             game.connect(name, () => {
-                $('#myModal').modal('hide');
+                //$('#myModal').modal('hide');
+                $('#login-form').hide();
             });
         }
     </script>

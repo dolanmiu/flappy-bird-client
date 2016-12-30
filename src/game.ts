@@ -3,7 +3,7 @@ namespace Flappy {
         constructor(elementName: string) {
             let element = document.getElementById(elementName);
 
-            super(Flappy.Constants.gameWidth, Flappy.Constants.gameHeight, Phaser.AUTO, element.id, undefined, false, false);
+            super(Flappy.Constants.gameWidth, Flappy.Constants.gameHeight, Phaser.AUTO, element.id, Flappy.State.Blank, false, false);
 
             this.state.add('play', Flappy.State.Play);
             window.addEventListener('resize', (myFunction) => {

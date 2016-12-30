@@ -93,7 +93,7 @@ var Flappy;
     class Game extends Phaser.Game {
         constructor(elementName) {
             let element = document.getElementById(elementName);
-            super(Flappy.Constants.gameWidth, Flappy.Constants.gameHeight, Phaser.AUTO, element.id, undefined, false, false);
+            super(Flappy.Constants.gameWidth, Flappy.Constants.gameHeight, Phaser.AUTO, element.id, Flappy.State.Blank, false, false);
             this.state.add('play', Flappy.State.Play);
             window.addEventListener('resize', (myFunction) => {
                 this.scale.setGameSize(Flappy.Constants.gameWidth, Flappy.Constants.gameHeight);
@@ -429,6 +429,31 @@ var Flappy;
         }
     }
     Flappy.Sky = Sky;
+})(Flappy || (Flappy = {}));
+var Flappy;
+(function (Flappy) {
+    var State;
+    (function (State) {
+        const floorHeight = 112;
+        class Blank extends Phaser.State {
+            preload() {
+                this.game.load.image('sky', 'assets/sky.png');
+                this.game.load.image('floor', 'assets/land.png');
+            }
+            create() {
+                this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+                this.game.stage.backgroundColor = '#4ec0ca';
+                this.game.stage.disableVisibilityChange = true;
+                this.floor = new Flappy.Floor(this.game, floorHeight, 'floor');
+                this.sky = new Flappy.Sky(this.game, 109, 'sky', floorHeight);
+            }
+            update() {
+                this.game.world.width = Flappy.Constants.gameWidth;
+                this.floor.x = 0;
+            }
+        }
+        State.Blank = Blank;
+    })(State = Flappy.State || (Flappy.State = {}));
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
