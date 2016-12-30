@@ -78,12 +78,10 @@ namespace Flappy.State {
 
             this.scoreCounter = new ScoreCounter(this.game);
 
-            let socket = io.connect(Constants.serverUrl);
             /*socket.on('news', (data) =>  {
                 console.log(data);
                 socket.emit('my other event', { my: 'data' });
             });*/
-
         }
 
         public update(): void {

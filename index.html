@@ -18,14 +18,50 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js"></script>
     <script src="./dist/bundle.js"></script>
 </head>
 
 <body>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Flappy Bird Online</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <label for="example-text-input" class="col-xs-2 col-form-label">Name</label>
+                        <div class="col-xs-10">
+                            <input class="form-control" type="text" placeholder="Player">
+                            <small class="form-text text-muted">The name of which other players will see you as.</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="connect();">Connect</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Workaround: for some reason, fonts will only work if this specific div is there -->
     <div class="workaround">0</div>
+
     <div id="game" style="height: 100%"></div>
+
     <script>
         var game = new Flappy.Game("game");
+        $('#myModal').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true,
+        });
+        function connect(name) {
+            game.connect(name, () => {
+                $('#myModal').modal('hide');
+            });
+        }
     </script>
 </body>

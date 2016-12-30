@@ -44,7 +44,7 @@ namespace Flappy {
             if (this.body.velocity.y >= 700) {
                 this.body.velocity.y = 700;
             }
-            //this.angle = this.calculateAngle(this.body.velocity.y);
+            // this.angle = this.calculateAngle(this.body.velocity.y);
             this.x += this.game.time.elapsed * this.currentSpeed;
         }
 

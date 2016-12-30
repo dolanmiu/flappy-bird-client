@@ -18,7 +18,7 @@ namespace Flappy {
         private replayButton: ReplayButton;
         private gameOverStatus: boolean;
 
-        constructor(game: Game, params: IScoreBoardParams, restartGameLambda: Function) {
+        constructor(game: Phaser.Game, params: IScoreBoardParams, restartGameLambda: Function) {
             super(game);
 
             this.gameOver = new Phaser.Sprite(game, Constants.gameWidth / 2, Constants.gameHeight / 2 - 100, params.gameOverKey);

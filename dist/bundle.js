@@ -24,7 +24,7 @@ var Flappy;
             if (this.body.velocity.y >= 700) {
                 this.body.velocity.y = 700;
             }
-            //this.angle = this.calculateAngle(this.body.velocity.y);
+            // this.angle = this.calculateAngle(this.body.velocity.y);
             this.x += this.game.time.elapsed * this.currentSpeed;
         }
         stop() {
@@ -93,9 +93,17 @@ var Flappy;
     class Game extends Phaser.Game {
         constructor(elementName) {
             let element = document.getElementById(elementName);
-            super(Flappy.Constants.gameWidth, Flappy.Constants.gameHeight, Phaser.AUTO, element.id, Flappy.State.Play, false, false);
+            super(Flappy.Constants.gameWidth, Flappy.Constants.gameHeight, Phaser.AUTO, element.id, undefined, false, false);
+            this.state.add('play', Flappy.State.Play);
             window.addEventListener('resize', (myFunction) => {
                 this.scale.setGameSize(Flappy.Constants.gameWidth, Flappy.Constants.gameHeight);
+            });
+        }
+        connect(name, callback) {
+            let socket = io.connect(Flappy.Constants.serverUrl);
+            socket.on('connect', () => {
+                this.state.start('play');
+                callback();
             });
         }
     }
@@ -134,7 +142,7 @@ var Flappy;
             for (let pipe of pipes) {
                 let availableHeight = Flappy.Constants.gameHeight - this.floorHeight - Flappy.Constants.gapSize;
                 let adjustedLocation = this.map(pipe.location, 0, 1, 0.1, 0.9);
-                this.create(pipe.index * Flappy.Constants.gapSize, pipe.location * availableHeight);
+                this.create(pipe.index * Flappy.Constants.gapSize, adjustedLocation * availableHeight);
             }
         }
         create(x, y) {
@@ -483,7 +491,6 @@ var Flappy;
                     this.scoreCounter.restart();
                 });
                 this.scoreCounter = new Flappy.ScoreCounter(this.game);
-                let socket = io.connect(Flappy.Constants.serverUrl);
                 /*socket.on('news', (data) =>  {
                     console.log(data);
                     socket.emit('my other event', { my: 'data' });

@@ -16,7 +16,7 @@ namespace Flappy {
             for (let pipe of pipes) {
                 let availableHeight = Flappy.Constants.gameHeight - this.floorHeight - Flappy.Constants.gapSize;
                 let adjustedLocation = this.map(pipe.location, 0, 1, 0.1, 0.9);
-                this.create(pipe.index * Flappy.Constants.gapSize, pipe.location * availableHeight);
+                this.create(pipe.index * Flappy.Constants.gapSize, adjustedLocation * availableHeight);
             }
         }
 
