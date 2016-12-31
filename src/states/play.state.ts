@@ -96,6 +96,10 @@ namespace Flappy.State {
             this.tutorialSplash = new TutorialSplash(this.game, {
                 key: 'splash',
             });
+
+            window.addEventListener('resize', (myFunction) => {
+                this.game.camera.follow(this.bird, Phaser.Camera.FOLLOW_PLATFORMER);
+            });
         }
 
         public update(): void {
@@ -106,11 +110,13 @@ namespace Flappy.State {
             this.game.physics.arcade.collide(this.bird, this.floor, () => {
                 this.bird.deathSequence();
                 this.scoreBoard.show(this.scoreCounter.score);
+                this.game.camera.shake(0.003, 300, true, Phaser.Camera.SHAKE_BOTH, false);
             });
 
             this.game.physics.arcade.overlap(this.bird, this.pipePool.sprites, () => {
                 this.bird.deathSequence();
                 this.scoreBoard.show(this.scoreCounter.score);
+                this.game.camera.shake(0.003, 300, true, Phaser.Camera.SHAKE_BOTH, false);
             });
 
             this.game.physics.arcade.overlap(this.bird, this.pipePool.holes, (bird: Bird, pipe: Phaser.Sprite) => {
