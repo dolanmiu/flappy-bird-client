@@ -68,10 +68,10 @@
     <div id="game" style="height: 100%"></div>
 
     <script>
-        let game = new Flappy.Game("game");
+        let flappyGame = new Flappy.Game("game");
         function connect() {
             let playerTag = $('#player-tag').val();
-            game.connect(playerTag, () => {
+            flappyGame.connect(playerTag, () => {
                 $('#login-form').hide();
             });
         }
