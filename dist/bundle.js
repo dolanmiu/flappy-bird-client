@@ -671,8 +671,8 @@ var Flappy;
             this.game.add.existing(this);
         }
         update() {
-            this.x = Flappy.Global.Constants.gameWidth / 2;
-            this.y = Flappy.Global.Constants.gameHeight / 2;
+            this.cameraOffset.x = Flappy.Global.Constants.gameWidth / 2;
+            this.cameraOffset.y = Flappy.Global.Constants.gameHeight / 2;
         }
     }
     Flappy.TutorialSplash = TutorialSplash;
