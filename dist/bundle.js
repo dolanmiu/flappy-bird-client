@@ -157,7 +157,7 @@ var Flappy;
         }
         Constants.gameSpeed = 0.1;
         Constants.jumpSpeed = 500;
-        Constants.gapSize = 200;
+        Constants.gapSize = 160;
         Constants.gravity = 2000;
         Constants.serverUrl = 'http://localhost:9001';
         Constants.gameHeight = 665;
