@@ -4,14 +4,13 @@ var Flappy;
     class BaseBird extends Phaser.Sprite {
         constructor(game, x, y, params) {
             super(game, x, y, params.key);
-            this.game.physics.enable(this, Phaser.Physics.ARCADE);
-            this.game.add.existing(this);
             this.animations.add('fly');
             this.animations.play('fly', 3, true);
             this.anchor.set(0.5, 0.5);
             this.hitSound = this.game.add.audio(params.hitSoundKey);
             this.dieSound = this.game.add.audio(params.dieSoundKey);
             this.wingSound = this.game.add.audio(params.windSoundKey);
+            this.game.add.existing(this);
         }
         jump() {
             this.wingSound.play();
@@ -37,6 +36,7 @@ var Flappy;
         constructor(game, floorHeight, params) {
             super(game, 100, 0, params);
             this.floorHeight = floorHeight;
+            this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.currentSpeed = 0;
             this.restart();
         }
@@ -97,7 +97,10 @@ var Flappy;
         constructor(game, x, y, displayName, params) {
             super(game, x, y, params);
             this.displayName = displayName;
-            this.nameTag = new Phaser.Text(game, 0, 0, displayName);
+            this.nameTag = new Phaser.Text(game, 0, -35, displayName, { font: '12px flappy', fill: 'white' });
+            this.nameTag.stroke = 'black';
+            this.nameTag.strokeThickness = 2;
+            this.nameTag.anchor.x = 0.5;
             this.addChild(this.nameTag);
             this.game.add.existing(this);
         }
@@ -304,6 +307,44 @@ var Flappy;
         }
     }
     Flappy.UpPipe = UpPipe;
+})(Flappy || (Flappy = {}));
+var Flappy;
+(function (Flappy) {
+    class PlayerManager {
+        constructor(game, birdParams) {
+            this.game = game;
+            this.birdParams = birdParams;
+            this.players = new Map();
+            Flappy.Global.socket.on('position', (data) => {
+                let player = this.players.get(data.id);
+                if (player === undefined) {
+                    return;
+                }
+                player.x = data.x;
+                player.y = data.y;
+            });
+            Flappy.Global.socket.on('new-player', (data) => {
+                let player = new Flappy.MultiplayerBird(game, 0, 0, data.name, birdParams);
+                this.players.set(data.id, player);
+            });
+        }
+        createPlayers(data) {
+            for (let player of data) {
+                if (player.id === Flappy.Global.socket.id) {
+                    return;
+                }
+                this.createPlayer(player);
+            }
+        }
+        createPlayer(data) {
+            if (this.players.has(data.id)) {
+                return;
+            }
+            let player = new Flappy.MultiplayerBird(this.game, 0, 0, data.name, this.birdParams);
+            this.players.set(data.id, player);
+        }
+    }
+    Flappy.PlayerManager = PlayerManager;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
@@ -530,7 +571,13 @@ var Flappy;
 (function (Flappy) {
     var State;
     (function (State) {
-        const floorHeight = 112;
+        const FLOOR_HEIGHT = 112;
+        const BIRD_PARAMS = {
+            dieSoundKey: 'die',
+            hitSoundKey: 'hit',
+            key: 'bird',
+            windSoundKey: 'wing',
+        };
         class Play extends Phaser.State {
             preload() {
                 this.game.load.spritesheet('bird', 'assets/bird.png', 34, 24);
@@ -563,18 +610,16 @@ var Flappy;
                 this.game.input.onDown.add(() => {
                     this.tutorialSplash.visible = false;
                 });
-                this.sky = new Flappy.Sky(this.game, 109, 'sky', floorHeight);
-                this.pipePool = new Flappy.PipePool(this.game, floorHeight);
-                this.floor = new Flappy.Floor(this.game, floorHeight, 'floor');
-                this.bird = new Flappy.Bird(this.game, floorHeight, {
-                    dieSoundKey: 'die',
-                    hitSoundKey: 'hit',
-                    key: 'bird',
-                    windSoundKey: 'wing',
-                });
+                this.sky = new Flappy.Sky(this.game, 109, 'sky', FLOOR_HEIGHT);
+                this.pipePool = new Flappy.PipePool(this.game, FLOOR_HEIGHT);
+                this.floor = new Flappy.Floor(this.game, FLOOR_HEIGHT, 'floor');
+                this.bird = new Flappy.Bird(this.game, FLOOR_HEIGHT, BIRD_PARAMS);
                 this.game.camera.follow(this.bird, Phaser.Camera.FOLLOW_PLATFORMER);
                 $.get(`${Flappy.Global.Constants.serverUrl}/stage?start=2&end=8`, (data) => {
                     this.pipePool.addPipes(data);
+                });
+                $.get(`${Flappy.Global.Constants.serverUrl}/players`, (data) => {
+                    this.playerManager.createPlayers(data);
                 });
                 this.scoreBoard = new Flappy.ScoreBoard(this.game, {
                     bronzeMedalKey: 'bronzeMedal',
@@ -594,10 +639,7 @@ var Flappy;
                 this.tutorialSplash = new Flappy.TutorialSplash(this.game, {
                     key: 'splash',
                 });
-                /*socket.on('news', (data) =>  {
-                    console.log(data);
-                    socket.emit('my other event', { my: 'data' });
-                });*/
+                this.playerManager = new Flappy.PlayerManager(this.game, BIRD_PARAMS);
             }
             update() {
                 if (this.scoreBoard.isGameOver) {

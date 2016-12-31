@@ -10,9 +10,6 @@ namespace Flappy {
         constructor(game: Phaser.Game, x: number, y: number, params: IBirdParams) {
             super(game, x, y, params.key);
 
-            this.game.physics.enable(this, Phaser.Physics.ARCADE);
-            this.game.add.existing(this);
-
             this.animations.add('fly');
             this.animations.play('fly', 3, true);
             this.anchor.set(0.5, 0.5);
@@ -20,6 +17,8 @@ namespace Flappy {
             this.hitSound = this.game.add.audio(params.hitSoundKey);
             this.dieSound = this.game.add.audio(params.dieSoundKey);
             this.wingSound = this.game.add.audio(params.windSoundKey);
+
+            this.game.add.existing(this);
         }
 
         public jump(): void {

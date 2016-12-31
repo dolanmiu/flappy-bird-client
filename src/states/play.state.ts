@@ -1,6 +1,12 @@
 namespace Flappy.State {
 
-    const floorHeight: number = 112;
+    const FLOOR_HEIGHT: number = 112;
+    const BIRD_PARAMS: IBirdParams = {
+        dieSoundKey: 'die',
+        hitSoundKey: 'hit',
+        key: 'bird',
+        windSoundKey: 'wing',
+    };
 
     export class Play extends Phaser.State {
 
@@ -11,6 +17,7 @@ namespace Flappy.State {
         private scoreBoard: ScoreBoard;
         private scoreCounter: ScoreCounter;
         private tutorialSplash: TutorialSplash;
+        private playerManager: PlayerManager;
 
         public preload(): void {
             this.game.load.spritesheet('bird', 'assets/bird.png', 34, 24);
@@ -51,21 +58,20 @@ namespace Flappy.State {
                 this.tutorialSplash.visible = false;
             });
 
-            this.sky = new Sky(this.game, 109, 'sky', floorHeight);
+            this.sky = new Sky(this.game, 109, 'sky', FLOOR_HEIGHT);
 
-            this.pipePool = new PipePool(this.game, floorHeight);
-            this.floor = new Floor(this.game, floorHeight, 'floor');
-            this.bird = new Bird(this.game, floorHeight, {
-                dieSoundKey: 'die',
-                hitSoundKey: 'hit',
-                key: 'bird',
-                windSoundKey: 'wing',
-            });
+            this.pipePool = new PipePool(this.game, FLOOR_HEIGHT);
+            this.floor = new Floor(this.game, FLOOR_HEIGHT, 'floor');
+            this.bird = new Bird(this.game, FLOOR_HEIGHT, BIRD_PARAMS);
 
             this.game.camera.follow(this.bird, Phaser.Camera.FOLLOW_PLATFORMER);
 
             $.get(`${Global.Constants.serverUrl}/stage?start=2&end=8`, (data) => {
                 this.pipePool.addPipes(data);
+            });
+
+            $.get(`${Global.Constants.serverUrl}/players`, (data: Array<IPlayer>) => {
+                this.playerManager.createPlayers(data);
             });
 
             this.scoreBoard = new ScoreBoard(this.game, {
@@ -89,10 +95,7 @@ namespace Flappy.State {
                 key: 'splash',
             });
 
-            /*socket.on('news', (data) =>  {
-                console.log(data);
-                socket.emit('my other event', { my: 'data' });
-            });*/
+            this.playerManager = new PlayerManager(this.game, BIRD_PARAMS);
         }
 
         public update(): void {
