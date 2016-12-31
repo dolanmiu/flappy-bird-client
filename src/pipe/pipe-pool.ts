@@ -2,7 +2,7 @@ namespace Flappy {
 
     const LEVEL_OFFSET: number = 500;
 
-    interface IPipe {
+    export interface IPipe {
         index: number;
         location: number;
     }
@@ -44,7 +44,7 @@ namespace Flappy {
         public get sprites(): Array<Phaser.Sprite | Phaser.TileSprite> {
             let combinedArray = new Array<Phaser.Sprite | Phaser.TileSprite>();
             for (let child of this.children) {
-                let pipeSet = <PipeSet>child;
+                let pipeSet = <PipeSet> child;
                 combinedArray = combinedArray.concat(pipeSet.sprites);
             }
             return combinedArray;

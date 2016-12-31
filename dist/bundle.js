@@ -205,6 +205,36 @@ var Flappy;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
+    class LevelRequester {
+        constructor(scoreCounter, pipePool) {
+            this.scoreCounter = scoreCounter;
+            this.pipePool = pipePool;
+            this.requesting = false;
+        }
+        request(start, end, callback) {
+            $.get(`${Flappy.Global.Constants.serverUrl}/stage?start=${start}&end=${end}`, (data) => {
+                callback(data);
+            });
+        }
+        update(callback) {
+            if (this.requesting === true) {
+                return;
+            }
+            if (Math.abs(this.scoreCounter.score - this.pipePool.length) <= 10) {
+                console.log('requestin at' + Math.abs(this.scoreCounter.score - this.pipePool.length));
+                let startIndex = this.pipePool.length;
+                this.request(startIndex, startIndex + 20, (pipes) => {
+                    callback(pipes);
+                    this.requesting = false;
+                });
+                this.requesting = true;
+            }
+        }
+    }
+    Flappy.LevelRequester = LevelRequester;
+})(Flappy || (Flappy = {}));
+var Flappy;
+(function (Flappy) {
     class DownPipe extends Phaser.Group {
         constructor(game, x, y, params) {
             super(game);
@@ -336,6 +366,8 @@ var Flappy;
             this.birdParams = birdParams;
             this.players = new Map();
             this.group = this.game.add.group();
+        }
+        listen() {
             Flappy.Global.socket.on('position', (data) => {
                 let player = this.players.get(data.id);
                 if (player === undefined) {
@@ -360,6 +392,11 @@ var Flappy;
                 }
                 let player = this.players.get(data.id);
                 player.deathSequence();
+            });
+        }
+        createPlayersFromServer() {
+            $.get(`${Flappy.Global.Constants.serverUrl}/players`, (data) => {
+                this.createPlayers(data);
             });
         }
         createPlayers(data) {
@@ -608,6 +645,7 @@ var Flappy;
     var State;
     (function (State) {
         const FLOOR_HEIGHT = 112;
+        const SKY_HEIGHT = 109;
         const BIRD_PARAMS = {
             dieSoundKey: 'die',
             hitSoundKey: 'hit',
@@ -646,19 +684,15 @@ var Flappy;
                 this.game.input.onDown.add(() => {
                     this.tutorialSplash.visible = false;
                 });
-                this.sky = new Flappy.Sky(this.game, 109, 'sky', FLOOR_HEIGHT);
+                this.sky = new Flappy.Sky(this.game, SKY_HEIGHT, 'sky', FLOOR_HEIGHT);
                 this.pipePool = new Flappy.PipePool(this.game, FLOOR_HEIGHT);
                 this.floor = new Flappy.Floor(this.game, FLOOR_HEIGHT, 'floor');
                 this.bird = new Flappy.Bird(this.game, FLOOR_HEIGHT, BIRD_PARAMS);
                 this.game.camera.follow(this.bird, Phaser.Camera.FOLLOW_PLATFORMER);
-                $.get(`${Flappy.Global.Constants.serverUrl}/stage?start=0&end=8`, (data) => {
-                    this.pipePool.addPipes(data);
-                });
-                $.get(`${Flappy.Global.Constants.serverUrl}/players`, (data) => {
-                    this.playerManager.createPlayers(data);
-                });
                 this.scoreCounter = new Flappy.ScoreCounter(this.game);
                 this.playerManager = new Flappy.PlayerManager(this.game, BIRD_PARAMS);
+                this.playerManager.createPlayersFromServer();
+                this.playerManager.listen();
                 this.scoreBoard = new Flappy.ScoreBoard(this.game, {
                     bronzeMedalKey: 'bronzeMedal',
                     gameOverKey: 'gameOver',
@@ -673,6 +707,7 @@ var Flappy;
                     this.scoreCounter.restart();
                     this.tutorialSplash.visible = true;
                 });
+                this.levelRequester = new Flappy.LevelRequester(this.scoreCounter, this.pipePool);
                 this.tutorialSplash = new Flappy.TutorialSplash(this.game, {
                     key: 'splash',
                 });
@@ -681,6 +716,10 @@ var Flappy;
                 });
             }
             update() {
+                this.levelRequester.update((data) => {
+                    this.pipePool.addPipes(data);
+                    this.game.world.bounds.width += Flappy.Global.Constants.pipeSpacing * data.length;
+                });
                 if (this.scoreBoard.isGameOver) {
                     return;
                 }

@@ -1,6 +1,7 @@
 namespace Flappy.State {
 
     const FLOOR_HEIGHT: number = 112;
+    const SKY_HEIGHT: number = 109;
     const BIRD_PARAMS: IBirdParams = {
         dieSoundKey: 'die',
         hitSoundKey: 'hit',
@@ -18,6 +19,7 @@ namespace Flappy.State {
         private scoreCounter: ScoreCounter;
         private tutorialSplash: TutorialSplash;
         private playerManager: PlayerManager;
+        private levelRequester: LevelRequester;
 
         public preload(): void {
             this.game.load.spritesheet('bird', 'assets/bird.png', 34, 24);
@@ -58,7 +60,7 @@ namespace Flappy.State {
                 this.tutorialSplash.visible = false;
             });
 
-            this.sky = new Sky(this.game, 109, 'sky', FLOOR_HEIGHT);
+            this.sky = new Sky(this.game, SKY_HEIGHT, 'sky', FLOOR_HEIGHT);
 
             this.pipePool = new PipePool(this.game, FLOOR_HEIGHT);
             this.floor = new Floor(this.game, FLOOR_HEIGHT, 'floor');
@@ -66,17 +68,11 @@ namespace Flappy.State {
 
             this.game.camera.follow(this.bird, Phaser.Camera.FOLLOW_PLATFORMER);
 
-            $.get(`${Global.Constants.serverUrl}/stage?start=0&end=8`, (data) => {
-                this.pipePool.addPipes(data);
-            });
-
-            $.get(`${Global.Constants.serverUrl}/players`, (data: Array<IPlayer>) => {
-                this.playerManager.createPlayers(data);
-            });
-
             this.scoreCounter = new ScoreCounter(this.game);
 
             this.playerManager = new PlayerManager(this.game, BIRD_PARAMS);
+            this.playerManager.createPlayersFromServer();
+            this.playerManager.listen();
 
             this.scoreBoard = new ScoreBoard(this.game, {
                 bronzeMedalKey: 'bronzeMedal',
@@ -93,6 +89,8 @@ namespace Flappy.State {
                 this.tutorialSplash.visible = true;
             });
 
+            this.levelRequester = new LevelRequester(this.scoreCounter, this.pipePool);
+
             this.tutorialSplash = new TutorialSplash(this.game, {
                 key: 'splash',
             });
@@ -103,6 +101,11 @@ namespace Flappy.State {
         }
 
         public update(): void {
+            this.levelRequester.update((data) => {
+                this.pipePool.addPipes(data);
+                this.game.world.bounds.width += Global.Constants.pipeSpacing * data.length;
+            });
+
             if (this.scoreBoard.isGameOver) {
                 return;
             }

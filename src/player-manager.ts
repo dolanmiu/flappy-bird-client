@@ -12,7 +12,9 @@ namespace Flappy {
         constructor(private game: Phaser.Game, private birdParams: IBirdParams) {
             this.players = new Map<string, MultiplayerBird>();
             this.group = this.game.add.group();
+        }
 
+        public listen(): void {
             Global.socket.on('position', (data: { x: number, y: number, id: string }) => {
                 let player = this.players.get(data.id);
 
@@ -45,7 +47,13 @@ namespace Flappy {
             });
         }
 
-        public createPlayers(data: Array<IPlayer>): void {
+        public createPlayersFromServer(): void {
+            $.get(`${Global.Constants.serverUrl}/players`, (data: Array<IPlayer>) => {
+                this.createPlayers(data);
+            });
+        }
+
+        private createPlayers(data: Array<IPlayer>): void {
             for (let player of data) {
                 if (player.id === Global.socket.id) {
                     return;
