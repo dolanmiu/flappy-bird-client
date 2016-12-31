@@ -8,6 +8,8 @@ namespace Flappy {
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.currentSpeed = 0;
             this.restart();
+
+            this.game.add.existing(this);
         }
 
         public update(): void {

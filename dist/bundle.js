@@ -10,7 +10,6 @@ var Flappy;
             this.hitSound = this.game.add.audio(params.hitSoundKey);
             this.dieSound = this.game.add.audio(params.dieSoundKey);
             this.wingSound = this.game.add.audio(params.windSoundKey);
-            this.game.add.existing(this);
         }
         jump() {
             this.wingSound.play();
@@ -39,6 +38,7 @@ var Flappy;
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.currentSpeed = 0;
             this.restart();
+            this.game.add.existing(this);
         }
         update() {
             if (this.body.velocity.y >= 700) {
@@ -102,7 +102,6 @@ var Flappy;
             this.nameTag.strokeThickness = 2;
             this.nameTag.anchor.x = 0.5;
             this.addChild(this.nameTag);
-            this.game.add.existing(this);
         }
     }
     Flappy.MultiplayerBird = MultiplayerBird;
@@ -315,6 +314,7 @@ var Flappy;
             this.game = game;
             this.birdParams = birdParams;
             this.players = new Map();
+            this.group = this.game.add.group();
             Flappy.Global.socket.on('position', (data) => {
                 let player = this.players.get(data.id);
                 if (player === undefined) {
@@ -324,8 +324,7 @@ var Flappy;
                 player.y = data.y;
             });
             Flappy.Global.socket.on('new-player', (data) => {
-                let player = new Flappy.MultiplayerBird(game, 0, 0, data.name, birdParams);
-                this.players.set(data.id, player);
+                this.createPlayer(data);
             });
         }
         createPlayers(data) {
@@ -340,7 +339,9 @@ var Flappy;
             if (this.players.has(data.id)) {
                 return;
             }
-            let player = new Flappy.MultiplayerBird(this.game, 0, 0, data.name, this.birdParams);
+            // Off stage to hide
+            let player = new Flappy.MultiplayerBird(this.game, -1000, -1000, data.name, this.birdParams);
+            this.group.add(player);
             this.players.set(data.id, player);
         }
     }

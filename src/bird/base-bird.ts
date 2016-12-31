@@ -17,8 +17,6 @@ namespace Flappy {
             this.hitSound = this.game.add.audio(params.hitSoundKey);
             this.dieSound = this.game.add.audio(params.dieSoundKey);
             this.wingSound = this.game.add.audio(params.windSoundKey);
-
-            this.game.add.existing(this);
         }
 
         public jump(): void {

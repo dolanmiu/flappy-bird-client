@@ -7,9 +7,11 @@ namespace Flappy {
 
     export class PlayerManager {
         private players: Map<string, MultiplayerBird>;
+        private group: Phaser.Group;
 
         constructor(private game: Phaser.Game, private birdParams: IBirdParams) {
             this.players = new Map<string, MultiplayerBird>();
+            this.group = this.game.add.group();
 
             Global.socket.on('position', (data: { x: number, y: number, id: string }) => {
                 let player = this.players.get(data.id);
@@ -23,8 +25,7 @@ namespace Flappy {
             });
 
             Global.socket.on('new-player', (data: IPlayer) => {
-                let player = new MultiplayerBird(game, 0, 0, data.name, birdParams);
-                this.players.set(data.id, player);
+                this.createPlayer(data);
             });
         }
 
@@ -41,8 +42,9 @@ namespace Flappy {
             if (this.players.has(data.id)) {
                 return;
             }
-
-            let player = new MultiplayerBird(this.game, 0, 0, data.name, this.birdParams);
+            // Off stage to hide
+            let player = new MultiplayerBird(this.game, -1000, -1000, data.name, this.birdParams);
+            this.group.add(player);
             this.players.set(data.id, player);
         }
 

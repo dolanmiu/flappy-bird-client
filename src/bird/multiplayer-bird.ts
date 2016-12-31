@@ -11,8 +11,6 @@ namespace Flappy {
             this.nameTag.strokeThickness = 2;
             this.nameTag.anchor.x = 0.5;
             this.addChild(this.nameTag);
-
-            this.game.add.existing(this);
         }
     }
 }
