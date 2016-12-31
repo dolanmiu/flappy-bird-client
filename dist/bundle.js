@@ -173,6 +173,14 @@ var Flappy;
     var Global;
     (function (Global) {
         class Constants {
+            static get serverUrl() {
+                if (window.location.href === 'http://127.0.0.1:8080/') {
+                    return 'http://localhost:9001';
+                }
+                else {
+                    return 'https://flappy-bird-server.herokuapp.com/';
+                }
+            }
             static get gameWidth() {
                 let ratio = this.gameHeight / window.innerHeight;
                 return window.innerWidth * ratio;
@@ -184,7 +192,6 @@ var Flappy;
         Constants.gravity = 2000;
         Constants.pipeSpacing = 200;
         Constants.terminalVelocity = 700;
-        Constants.serverUrl = 'http://localhost:9001';
         Constants.gameHeight = 665;
         Constants.worldOffset = -1000;
         Global.Constants = Constants;
