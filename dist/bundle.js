@@ -572,7 +572,7 @@ var Flappy;
                     this.scoreCounter.restart();
                 });
                 this.scoreCounter = new Flappy.ScoreCounter(this.game);
-                let d = new Flappy.TutorialSplash(this.game, {
+                this.tutorialSplash = new Flappy.TutorialSplash(this.game, {
                     key: 'splash',
                 });
                 /*socket.on('news', (data) =>  {
@@ -581,7 +581,6 @@ var Flappy;
                 });*/
             }
             update() {
-                console.log(this.scoreBoard.isGameOver);
                 if (this.scoreBoard.isGameOver) {
                     return;
                 }
