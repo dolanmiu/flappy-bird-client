@@ -24,6 +24,12 @@ namespace Flappy {
             super.jump(volume);
         }
 
+        public update(): void {
+            this.nameTag.angle = -this.angle;
+            this.nameTag.x = -35 * Math.sin(this.angle * (Math.PI / 180));
+            this.nameTag.y = -35 * Math.cos(this.angle * (Math.PI / 180));
+        }
+
         private calculateVolume(): number {
             let distance = Math.abs(this.game.camera.x - this.x);
             let clampedDistance = Math.min(Math.max(distance, 0), 1000);
