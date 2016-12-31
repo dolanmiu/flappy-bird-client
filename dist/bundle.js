@@ -178,7 +178,7 @@ var Flappy;
                     return 'http://localhost:9001';
                 }
                 else {
-                    return 'https://flappy-bird-server.herokuapp.com/';
+                    return 'https://flappy-bird-server.herokuapp.com';
                 }
             }
             static get gameWidth() {
