@@ -40,7 +40,9 @@ namespace Flappy {
             this.replayButton.alpha = 0;
             this.replayButton.events.onInputDown.add(() => {
                 restartGameLambda();
-                this.gameOverStatus = false;
+                setTimeout(() => {
+                    this.gameOverStatus = false;
+                }, 500);
                 this.gameOver.alpha = 0;
                 this.scoreWindow.alpha = 0;
                 this.replayButton.alpha = 0;
