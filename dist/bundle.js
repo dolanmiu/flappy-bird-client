@@ -600,11 +600,11 @@ var Flappy;
                 this.game.load.image('silverMedal', 'assets/medal-silver.png');
                 this.game.load.image('goldMedal', 'assets/medal-gold.png');
                 this.game.load.image('platMedal', 'assets/medal-platinum.png');
-                this.game.load.audio('wing', 'assets/sounds/sfx_wing.ogg');
-                this.game.load.audio('hit', 'assets/sounds/sfx_hit.ogg');
-                this.game.load.audio('die', 'assets/sounds/sfx_die.ogg');
-                this.game.load.audio('woosh', 'assets/sounds/sfx_swooshing.ogg');
-                this.game.load.audio('point', 'assets/sounds/sfx_point.ogg');
+                this.game.load.audio('wing', ['assets/sounds/sfx_wing.ogg', 'assets/sounds/sfx_wing.mp3']);
+                this.game.load.audio('hit', ['assets/sounds/sfx_hit.ogg', 'assets/sounds/sfx_hit.mp3']);
+                this.game.load.audio('die', ['assets/sounds/sfx_die.ogg', 'assets/sounds/sfx_die.mp3']);
+                this.game.load.audio('woosh', ['assets/sounds/sfx_swooshing.ogg', 'assets/sounds/sfx_swooshing.mp3']);
+                this.game.load.audio('point', ['assets/sounds/sfx_point.ogg', 'assets/sounds/sfx_point.mp3']);
             }
             create() {
                 this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
