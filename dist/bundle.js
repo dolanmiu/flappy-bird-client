@@ -21,10 +21,8 @@ var Flappy;
             }, 300);
         }
         calculateAngle(speed) {
-            if (speed >= 90) {
-                return 90;
-            }
-            return speed;
+            let angle = Flappy.Global.Utility.map(speed, -Flappy.Global.Constants.jumpSpeed, Flappy.Global.Constants.terminalVelocity, jumpTiltAngle, 90);
+            return angle;
         }
     }
     Flappy.BaseBird = BaseBird;
@@ -41,10 +39,10 @@ var Flappy;
             this.game.add.existing(this);
         }
         update() {
-            if (this.body.velocity.y >= 700) {
-                this.body.velocity.y = 700;
+            if (this.body.velocity.y >= Flappy.Global.Constants.terminalVelocity) {
+                this.body.velocity.y = Flappy.Global.Constants.terminalVelocity;
             }
-            // this.angle = this.calculateAngle(this.body.velocity.y);
+            this.angle = this.calculateAngle(this.body.velocity.y);
             this.x += this.game.time.elapsed * this.currentSpeed;
             Flappy.Global.socket.emit('position', {
                 x: this.x,
@@ -179,6 +177,7 @@ var Flappy;
         Constants.gapSize = 155;
         Constants.gravity = 2000;
         Constants.pipeSpacing = 200;
+        Constants.terminalVelocity = 700;
         Constants.serverUrl = 'http://localhost:9001';
         Constants.gameHeight = 665;
         Constants.worldOffset = -1000;

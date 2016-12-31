@@ -30,11 +30,9 @@ namespace Flappy {
             }, 300);
         }
 
-        private calculateAngle(speed: number): number {
-            if (speed >= 90) {
-                return 90;
-            }
-            return speed;
+        protected calculateAngle(speed: number): number {
+            let angle = Global.Utility.map(speed, -Global.Constants.jumpSpeed, Global.Constants.terminalVelocity, jumpTiltAngle, 90);
+            return angle;
         }
     }
 }

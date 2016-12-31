@@ -14,10 +14,10 @@ namespace Flappy {
         }
 
         public update(): void {
-            if (this.body.velocity.y >= 700) {
-                this.body.velocity.y = 700;
+            if (this.body.velocity.y >= Global.Constants.terminalVelocity) {
+                this.body.velocity.y = Global.Constants.terminalVelocity;
             }
-            // this.angle = this.calculateAngle(this.body.velocity.y);
+            this.angle = this.calculateAngle(this.body.velocity.y);
             this.x += this.game.time.elapsed * this.currentSpeed;
             Global.socket.emit('position', {
                 x: this.x,
