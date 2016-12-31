@@ -73,12 +73,15 @@ var Flappy;
             let y = this.getRandomStartingY(this.floorHeight);
             this.reset(100, y);
             this.body.allowGravity = false;
+            this.idleTween = this.game.add.tween(this).to({ y: this.y - 10 }, 1000, Phaser.Easing.Linear.None, false, 0, -1, true);
+            this.idleTween.start();
             this.game.input.onDown.add(this.jumpy, this);
         }
         jumpy() {
             if (this.body.allowGravity === false) {
                 this.body.allowGravity = true;
                 this.currentSpeed = Flappy.Global.Constants.gameSpeed;
+                this.idleTween.stop();
             }
             Flappy.Global.socket.emit('jump');
             this.jump();

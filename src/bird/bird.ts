@@ -1,6 +1,7 @@
 namespace Flappy {
     export class Bird extends BaseBird {
         protected currentSpeed: number;
+        protected idleTween: Phaser.Tween;
 
         constructor(game: Phaser.Game, private floorHeight: number, params: IBirdParams) {
             super(game, 100, 0, params);
@@ -51,6 +52,8 @@ namespace Flappy {
             let y = this.getRandomStartingY(this.floorHeight);
             this.reset(100, y);
             this.body.allowGravity = false;
+            this.idleTween = this.game.add.tween(this).to({ y: this.y - 10 }, 1000, Phaser.Easing.Linear.None, false, 0, -1, true);
+            this.idleTween.start();
             this.game.input.onDown.add(this.jumpy, this);
         }
 
@@ -58,6 +61,7 @@ namespace Flappy {
             if (this.body.allowGravity === false) {
                 this.body.allowGravity = true;
                 this.currentSpeed = Global.Constants.gameSpeed;
+                this.idleTween.stop();
             }
 
             Global.socket.emit('jump');
