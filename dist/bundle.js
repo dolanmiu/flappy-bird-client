@@ -176,7 +176,7 @@ var Flappy;
         }
         Constants.gameSpeed = 0.1;
         Constants.jumpSpeed = 500;
-        Constants.gapSize = 160;
+        Constants.gapSize = 155;
         Constants.gravity = 2000;
         Constants.pipeSpacing = 200;
         Constants.serverUrl = 'http://localhost:9001';
@@ -221,7 +221,6 @@ var Flappy;
                 return;
             }
             if (Math.abs(this.scoreCounter.score - this.pipePool.length) <= 10) {
-                console.log('requestin at' + Math.abs(this.scoreCounter.score - this.pipePool.length));
                 let startIndex = this.pipePool.length;
                 this.request(startIndex, startIndex + 20, (pipes) => {
                     callback(pipes);
@@ -392,6 +391,13 @@ var Flappy;
                 }
                 let player = this.players.get(data.id);
                 player.deathSequence();
+            });
+            Flappy.Global.socket.on('disconnected', (data) => {
+                if (!this.players.has(data.id)) {
+                    return;
+                }
+                let player = this.players.get(data.id);
+                player.destroy();
             });
         }
         createPlayersFromServer() {

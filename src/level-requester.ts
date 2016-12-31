@@ -19,7 +19,6 @@ namespace Flappy {
             }
 
             if (Math.abs(this.scoreCounter.score - this.pipePool.length) <= 10) {
-                console.log('requestin at' + Math.abs(this.scoreCounter.score - this.pipePool.length));
                 let startIndex = this.pipePool.length;
                 this.request(startIndex, startIndex + 20, (pipes) => {
                     callback(pipes);

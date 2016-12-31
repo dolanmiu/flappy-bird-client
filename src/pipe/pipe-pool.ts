@@ -53,7 +53,7 @@ namespace Flappy {
         public get holes(): Array<Phaser.Sprite> {
             let combinedArray = new Array<Phaser.Sprite>();
             for (let child of this.children) {
-                let pipeSet = <PipeSet>child;
+                let pipeSet = <PipeSet> child;
                 combinedArray = combinedArray.concat(pipeSet.hole);
             }
             return combinedArray;

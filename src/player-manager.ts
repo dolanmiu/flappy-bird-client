@@ -45,6 +45,14 @@ namespace Flappy {
                 let player = this.players.get(data.id);
                 player.deathSequence();
             });
+
+            Global.socket.on('disconnected', (data: IPlayer) => {
+                if (!this.players.has(data.id)) {
+                    return;
+                }
+                let player = this.players.get(data.id);
+                player.destroy();
+            });
         }
 
         public createPlayersFromServer(): void {
