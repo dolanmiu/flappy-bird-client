@@ -1,4 +1,7 @@
 namespace Flappy {
+
+    const LEVEL_OFFSET: number = 500;
+
     interface IPipe {
         index: number;
         location: number;
@@ -16,7 +19,7 @@ namespace Flappy {
             for (let pipe of pipes) {
                 let availableHeight = Global.Constants.gameHeight - this.floorHeight - Global.Constants.gapSize;
                 let adjustedLocation = Global.Utility.map(pipe.location, 0, 1, 0.1, 0.9);
-                this.create(pipe.index * Global.Constants.gapSize, adjustedLocation * availableHeight);
+                this.create(LEVEL_OFFSET + pipe.index * Global.Constants.gapSize, adjustedLocation * availableHeight);
             }
         }
 
@@ -41,7 +44,7 @@ namespace Flappy {
         public get sprites(): Array<Phaser.Sprite | Phaser.TileSprite> {
             let combinedArray = new Array<Phaser.Sprite | Phaser.TileSprite>();
             for (let child of this.children) {
-                let pipeSet = <PipeSet> child;
+                let pipeSet = <PipeSet>child;
                 combinedArray = combinedArray.concat(pipeSet.sprites);
             }
             return combinedArray;
@@ -50,7 +53,7 @@ namespace Flappy {
         public get holes(): Array<Phaser.Sprite> {
             let combinedArray = new Array<Phaser.Sprite>();
             for (let child of this.children) {
-                let pipeSet = <PipeSet> child;
+                let pipeSet = <PipeSet>child;
                 combinedArray = combinedArray.concat(pipeSet.hole);
             }
             return combinedArray;

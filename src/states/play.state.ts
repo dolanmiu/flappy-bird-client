@@ -66,7 +66,7 @@ namespace Flappy.State {
 
             this.game.camera.follow(this.bird, Phaser.Camera.FOLLOW_PLATFORMER);
 
-            $.get(`${Global.Constants.serverUrl}/stage?start=2&end=8`, (data) => {
+            $.get(`${Global.Constants.serverUrl}/stage?start=0&end=8`, (data) => {
                 this.pipePool.addPipes(data);
             });
 

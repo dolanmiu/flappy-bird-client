@@ -208,6 +208,7 @@ var Flappy;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
+    const LEVEL_OFFSET = 500;
     class PipePool extends Phaser.Group {
         constructor(game, floorHeight) {
             super(game);
@@ -219,7 +220,7 @@ var Flappy;
             for (let pipe of pipes) {
                 let availableHeight = Flappy.Global.Constants.gameHeight - this.floorHeight - Flappy.Global.Constants.gapSize;
                 let adjustedLocation = Flappy.Global.Utility.map(pipe.location, 0, 1, 0.1, 0.9);
-                this.create(pipe.index * Flappy.Global.Constants.gapSize, adjustedLocation * availableHeight);
+                this.create(LEVEL_OFFSET + pipe.index * Flappy.Global.Constants.gapSize, adjustedLocation * availableHeight);
             }
         }
         create(x, y) {
@@ -619,7 +620,7 @@ var Flappy;
                 this.floor = new Flappy.Floor(this.game, FLOOR_HEIGHT, 'floor');
                 this.bird = new Flappy.Bird(this.game, FLOOR_HEIGHT, BIRD_PARAMS);
                 this.game.camera.follow(this.bird, Phaser.Camera.FOLLOW_PLATFORMER);
-                $.get(`${Flappy.Global.Constants.serverUrl}/stage?start=2&end=8`, (data) => {
+                $.get(`${Flappy.Global.Constants.serverUrl}/stage?start=0&end=8`, (data) => {
                     this.pipePool.addPipes(data);
                 });
                 $.get(`${Flappy.Global.Constants.serverUrl}/players`, (data) => {
