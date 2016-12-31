@@ -456,7 +456,7 @@ var Flappy;
 (function (Flappy) {
     class ScoreCounter extends Phaser.Text {
         constructor(game) {
-            super(game, Flappy.Global.Constants.gameWidth / 2, 30, '0', { font: '30px flappy', fill: 'white' });
+            super(game, Flappy.Global.Constants.gameWidth / 2, 30, '0', { font: '40px flappy', fill: 'white' });
             this.stroke = 'black';
             this.strokeThickness = 8;
             this.anchor.x = 0.5;
