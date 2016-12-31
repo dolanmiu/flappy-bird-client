@@ -1,6 +1,5 @@
 var Flappy;
 (function (Flappy) {
-    const jumpTiltAngle = -60;
     class BaseBird extends Phaser.Sprite {
         constructor(game, x, y, params) {
             super(game, x, y, params.key);
@@ -20,15 +19,12 @@ var Flappy;
                 this.dieSound.play('', 0, volume);
             }, 300);
         }
-        calculateAngle(speed) {
-            let angle = Flappy.Global.Utility.map(speed, -Flappy.Global.Constants.jumpSpeed, Flappy.Global.Constants.terminalVelocity, jumpTiltAngle, 90);
-            return angle;
-        }
     }
     Flappy.BaseBird = BaseBird;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
+    const JUMP_TILT_ANGLE = -70;
     class Bird extends Flappy.BaseBird {
         constructor(game, floorHeight, params) {
             super(game, 100, 0, params);
@@ -45,6 +41,7 @@ var Flappy;
             this.angle = this.calculateAngle(this.body.velocity.y);
             this.x += this.game.time.elapsed * this.currentSpeed;
             Flappy.Global.socket.emit('position', {
+                angle: this.angle,
                 x: this.x,
                 y: this.y,
             });
@@ -75,6 +72,10 @@ var Flappy;
             this.idleTween = this.game.add.tween(this).to({ y: this.y - 10 }, 1000, Phaser.Easing.Linear.None, false, 0, -1, true);
             this.idleTween.start();
             this.game.input.onDown.add(this.jumpLambda, this);
+        }
+        calculateAngle(speed) {
+            let angle = Flappy.Global.Utility.map(speed, -Flappy.Global.Constants.jumpSpeed, Flappy.Global.Constants.terminalVelocity, JUMP_TILT_ANGLE, 90);
+            return angle;
         }
         jumpLambda() {
             if (this.body.allowGravity === false) {
@@ -373,6 +374,7 @@ var Flappy;
                 }
                 player.x = data.x;
                 player.y = data.y;
+                player.angle = data.angle;
             });
             Flappy.Global.socket.on('new-player', (data) => {
                 this.createPlayer(data);

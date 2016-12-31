@@ -15,7 +15,7 @@ namespace Flappy {
         }
 
         public listen(): void {
-            Global.socket.on('position', (data: { x: number, y: number, id: string }) => {
+            Global.socket.on('position', (data: { x: number, y: number, angle: number, id: string }) => {
                 let player = this.players.get(data.id);
 
                 if (player === undefined) {
@@ -24,6 +24,7 @@ namespace Flappy {
 
                 player.x = data.x;
                 player.y = data.y;
+                player.angle = data.angle;
             });
 
             Global.socket.on('new-player', (data: IPlayer) => {

@@ -1,4 +1,6 @@
 namespace Flappy {
+    const JUMP_TILT_ANGLE = -70;
+
     export class Bird extends BaseBird {
         protected currentSpeed: number;
         protected idleTween: Phaser.Tween;
@@ -18,8 +20,10 @@ namespace Flappy {
                 this.body.velocity.y = Global.Constants.terminalVelocity;
             }
             this.angle = this.calculateAngle(this.body.velocity.y);
+
             this.x += this.game.time.elapsed * this.currentSpeed;
             Global.socket.emit('position', {
+                angle: this.angle,
                 x: this.x,
                 y: this.y,
             });
@@ -55,6 +59,11 @@ namespace Flappy {
             this.idleTween = this.game.add.tween(this).to({ y: this.y - 10 }, 1000, Phaser.Easing.Linear.None, false, 0, -1, true);
             this.idleTween.start();
             this.game.input.onDown.add(this.jumpLambda, this);
+        }
+
+        private calculateAngle(speed: number): number {
+            let angle = Global.Utility.map(speed, -Global.Constants.jumpSpeed, Global.Constants.terminalVelocity, JUMP_TILT_ANGLE, 90);
+            return angle;
         }
 
         private jumpLambda(): void {

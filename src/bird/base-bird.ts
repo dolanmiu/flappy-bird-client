@@ -1,6 +1,4 @@
 namespace Flappy {
-    const jumpTiltAngle = -60;
-
     export abstract class BaseBird extends Phaser.Sprite {
 
         private hitSound: Phaser.Sound;
@@ -28,11 +26,6 @@ namespace Flappy {
             setTimeout(() => {
                 this.dieSound.play('', 0, volume);
             }, 300);
-        }
-
-        protected calculateAngle(speed: number): number {
-            let angle = Global.Utility.map(speed, -Global.Constants.jumpSpeed, Global.Constants.terminalVelocity, jumpTiltAngle, 90);
-            return angle;
         }
     }
 }
