@@ -4,7 +4,6 @@ var Flappy;
     class BaseBird extends Phaser.Sprite {
         constructor(game, x, y, params) {
             super(game, x, y, params.key);
-            this.currentSpeed = Flappy.Global.Constants.gameSpeed;
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.game.add.existing(this);
             this.animations.add('fly');
@@ -14,35 +13,14 @@ var Flappy;
             this.dieSound = this.game.add.audio(params.dieSoundKey);
             this.wingSound = this.game.add.audio(params.windSoundKey);
         }
-        stop() {
-            this.currentSpeed = 0;
-        }
-        restart() {
-            this.currentSpeed = Flappy.Global.Constants.gameSpeed;
-        }
         jump() {
-            this.body.velocity.y = -Flappy.Global.Constants.jumpSpeed;
             this.wingSound.play();
         }
-        get isStopped() {
-            return this.currentSpeed === 0;
-        }
         deathSequence() {
-            if (this.isStopped) {
-                return;
-            }
-            this.stop();
             this.hitSound.play();
             setTimeout(() => {
                 this.dieSound.play();
             }, 300);
-        }
-        update() {
-            if (this.body.velocity.y >= 700) {
-                this.body.velocity.y = 700;
-            }
-            // this.angle = this.calculateAngle(this.body.velocity.y);
-            this.x += this.game.time.elapsed * this.currentSpeed;
         }
         calculateAngle(speed) {
             if (speed >= 90) {
@@ -56,30 +34,59 @@ var Flappy;
 var Flappy;
 (function (Flappy) {
     class Bird extends Flappy.BaseBird {
-        constructor(game, x, y, params) {
-            super(game, x, y, params);
-            this.game.input.onDown.add(() => {
-                Flappy.Global.socket.emit('jump');
-                this.jump();
-            });
+        constructor(game, floorHeight, params) {
+            super(game, 100, 0, params);
+            this.floorHeight = floorHeight;
+            this.currentSpeed = 0;
+            this.restart();
         }
         update() {
-            super.update();
+            if (this.body.velocity.y >= 700) {
+                this.body.velocity.y = 700;
+            }
+            // this.angle = this.calculateAngle(this.body.velocity.y);
+            this.x += this.game.time.elapsed * this.currentSpeed;
             Flappy.Global.socket.emit('position', {
                 x: this.x,
                 y: this.y,
             });
         }
         deathSequence() {
+            if (this.isStopped) {
+                return;
+            }
+            this.stop();
             super.deathSequence();
-            this.game.input.onDown.removeAll();
+            this.game.input.onDown.remove(this.jumpy, this);
+        }
+        jump() {
+            super.jump();
+            this.body.velocity.y = -Flappy.Global.Constants.jumpSpeed;
+        }
+        stop() {
+            this.currentSpeed = 0;
+        }
+        get isStopped() {
+            return this.currentSpeed === 0;
         }
         restart() {
-            super.restart();
-            this.game.input.onDown.add(() => {
-                Flappy.Global.socket.emit('jump');
-                this.jump();
-            });
+            let y = this.getRandomStartingY(this.floorHeight);
+            this.reset(100, y);
+            this.body.allowGravity = false;
+            this.game.input.onDown.add(this.jumpy, this);
+        }
+        jumpy() {
+            if (this.body.allowGravity === false) {
+                this.body.allowGravity = true;
+                this.currentSpeed = Flappy.Global.Constants.gameSpeed;
+            }
+            Flappy.Global.socket.emit('jump');
+            this.jump();
+        }
+        getRandomStartingY(offset) {
+            let availableHeight = Flappy.Global.Constants.gameHeight - offset;
+            let adjustedLocation = Flappy.Global.Utility.map(Math.random(), 0, 1, 0.2, 0.8);
+            return adjustedLocation * availableHeight;
         }
     }
     Flappy.Bird = Bird;
@@ -164,6 +171,18 @@ var Flappy;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
+    var Global;
+    (function (Global) {
+        class Utility {
+            static map(input, inputMin, inputMax, outputMin, outputMax) {
+                return (input - inputMin) * (outputMax - outputMin) / (inputMax - inputMin) + outputMin;
+            }
+        }
+        Global.Utility = Utility;
+    })(Global = Flappy.Global || (Flappy.Global = {}));
+})(Flappy || (Flappy = {}));
+var Flappy;
+(function (Flappy) {
     class DownPipe extends Phaser.Group {
         constructor(game, x, y, params) {
             super(game);
@@ -194,7 +213,7 @@ var Flappy;
         addPipes(pipes) {
             for (let pipe of pipes) {
                 let availableHeight = Flappy.Global.Constants.gameHeight - this.floorHeight - Flappy.Global.Constants.gapSize;
-                let adjustedLocation = this.map(pipe.location, 0, 1, 0.1, 0.9);
+                let adjustedLocation = Flappy.Global.Utility.map(pipe.location, 0, 1, 0.1, 0.9);
                 this.create(pipe.index * Flappy.Global.Constants.gapSize, adjustedLocation * availableHeight);
             }
         }
@@ -230,9 +249,6 @@ var Flappy;
                 combinedArray = combinedArray.concat(pipeSet.hole);
             }
             return combinedArray;
-        }
-        map(input, inputMin, inputMax, outputMin, outputMax) {
-            return (input - inputMin) * (outputMax - outputMin) / (inputMax - inputMin) + outputMin;
         }
     }
     Flappy.PipePool = PipePool;
@@ -544,10 +560,13 @@ var Flappy;
                 this.game.world.setBounds(Flappy.Global.Constants.worldOffset, 0, 9000, Flappy.Global.Constants.gameHeight);
                 this.game.physics.startSystem(Phaser.Physics.ARCADE);
                 this.game.physics.arcade.gravity.y = Flappy.Global.Constants.gravity;
+                this.game.input.onDown.add(() => {
+                    this.tutorialSplash.visible = false;
+                });
                 this.sky = new Flappy.Sky(this.game, 109, 'sky', floorHeight);
                 this.pipePool = new Flappy.PipePool(this.game, floorHeight);
                 this.floor = new Flappy.Floor(this.game, floorHeight, 'floor');
-                this.bird = new Flappy.Bird(this.game, 100, 100, {
+                this.bird = new Flappy.Bird(this.game, floorHeight, {
                     dieSoundKey: 'die',
                     hitSoundKey: 'hit',
                     key: 'bird',
@@ -567,9 +586,9 @@ var Flappy;
                     silverMedalKey: 'silverMedal',
                     wooshSoundKey: 'woosh',
                 }, () => {
-                    this.bird.reset(100, 100);
                     this.bird.restart();
                     this.scoreCounter.restart();
+                    this.tutorialSplash.visible = true;
                 });
                 this.scoreCounter = new Flappy.ScoreCounter(this.game);
                 this.tutorialSplash = new Flappy.TutorialSplash(this.game, {
@@ -607,9 +626,6 @@ var Flappy;
             super(game, Flappy.Global.Constants.gameWidth / 2, Flappy.Global.Constants.gameHeight / 2, params.key);
             this.fixedToCamera = true;
             this.anchor.set(0.5, 0.5);
-            this.game.input.onDown.add(() => {
-                this.destroy();
-            });
             this.game.add.existing(this);
         }
         update() {

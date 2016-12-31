@@ -47,11 +47,15 @@ namespace Flappy.State {
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
             this.game.physics.arcade.gravity.y = Global.Constants.gravity;
 
+            this.game.input.onDown.add(() => {
+                this.tutorialSplash.visible = false;
+            });
+
             this.sky = new Sky(this.game, 109, 'sky', floorHeight);
 
             this.pipePool = new PipePool(this.game, floorHeight);
             this.floor = new Floor(this.game, floorHeight, 'floor');
-            this.bird = new Bird(this.game, 100, 100, {
+            this.bird = new Bird(this.game, floorHeight, {
                 dieSoundKey: 'die',
                 hitSoundKey: 'hit',
                 key: 'bird',
@@ -74,9 +78,9 @@ namespace Flappy.State {
                 silverMedalKey: 'silverMedal',
                 wooshSoundKey: 'woosh',
             }, () => {
-                this.bird.reset(100, 100);
                 this.bird.restart();
                 this.scoreCounter.restart();
+                this.tutorialSplash.visible = true;
             });
 
             this.scoreCounter = new ScoreCounter(this.game);

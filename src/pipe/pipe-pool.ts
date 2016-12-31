@@ -15,7 +15,7 @@ namespace Flappy {
         public addPipes(pipes: Array<IPipe>): void {
             for (let pipe of pipes) {
                 let availableHeight = Global.Constants.gameHeight - this.floorHeight - Global.Constants.gapSize;
-                let adjustedLocation = this.map(pipe.location, 0, 1, 0.1, 0.9);
+                let adjustedLocation = Global.Utility.map(pipe.location, 0, 1, 0.1, 0.9);
                 this.create(pipe.index * Global.Constants.gapSize, adjustedLocation * availableHeight);
             }
         }
@@ -54,10 +54,6 @@ namespace Flappy {
                 combinedArray = combinedArray.concat(pipeSet.hole);
             }
             return combinedArray;
-        }
-
-        private map(input: number, inputMin: number, inputMax: number, outputMin: number, outputMax: number): number {
-            return (input - inputMin) * (outputMax - outputMin) / (inputMax - inputMin) + outputMin;
         }
     }
 }

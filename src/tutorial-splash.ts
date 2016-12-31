@@ -11,10 +11,6 @@ namespace Flappy {
             this.fixedToCamera = true;
             this.anchor.set(0.5, 0.5);
 
-            this.game.input.onDown.add(() => {
-                this.destroy();
-            });
-
             this.game.add.existing(this);
         }
 
