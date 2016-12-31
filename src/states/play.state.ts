@@ -10,6 +10,7 @@ namespace Flappy.State {
         private pipePool: PipePool;
         private scoreBoard: ScoreBoard;
         private scoreCounter: ScoreCounter;
+        private tutorialSplash: TutorialSplash;
 
         public preload(): void {
             this.game.load.spritesheet('bird', 'assets/bird.png', 34, 24);
@@ -18,6 +19,8 @@ namespace Flappy.State {
             this.game.load.image('pipeBody', 'assets/pipe.png');
             this.game.load.image('pipeDownCap', 'assets/pipe-down.png');
             this.game.load.image('pipeUpCap', 'assets/pipe-up.png');
+
+            this.game.load.image('splash', 'assets/splash.png');
 
             this.game.load.image('gameOver', 'assets/game-over.png');
             this.game.load.image('scoreBoard', 'assets/score-board.png');
@@ -77,6 +80,10 @@ namespace Flappy.State {
             });
 
             this.scoreCounter = new ScoreCounter(this.game);
+
+            this.tutorialSplash = new TutorialSplash(this.game, {
+                key: 'splash',
+            });
 
             /*socket.on('news', (data) =>  {
                 console.log(data);

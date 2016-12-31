@@ -58,10 +58,10 @@ var Flappy;
     class Bird extends Flappy.BaseBird {
         constructor(game, x, y, params) {
             super(game, x, y, params);
-            game.input.mouse.onMouseDown = () => {
+            this.game.input.onDown.add(() => {
                 Flappy.Global.socket.emit('jump');
                 this.jump();
-            };
+            });
         }
         update() {
             super.update();
@@ -70,12 +70,30 @@ var Flappy;
                 y: this.y,
             });
         }
+        deathSequence() {
+            super.deathSequence();
+            this.game.input.onDown.removeAll();
+        }
+        restart() {
+            super.restart();
+            this.game.input.onDown.add(() => {
+                Flappy.Global.socket.emit('jump');
+                this.jump();
+            });
+        }
     }
     Flappy.Bird = Bird;
 })(Flappy || (Flappy = {}));
 var Flappy;
 (function (Flappy) {
     class MultiplayerBird extends Flappy.BaseBird {
+        constructor(game, x, y, displayName, params) {
+            super(game, x, y, params);
+            this.displayName = displayName;
+            this.nameTag = new Phaser.Text(game, 0, 0, displayName);
+            this.addChild(this.nameTag);
+            this.game.add.existing(this);
+        }
     }
     Flappy.MultiplayerBird = MultiplayerBird;
 })(Flappy || (Flappy = {}));
@@ -314,7 +332,9 @@ var Flappy;
             this.replayButton.alpha = 0;
             this.replayButton.events.onInputDown.add(() => {
                 restartGameLambda();
-                this.gameOverStatus = false;
+                setTimeout(() => {
+                    this.gameOverStatus = false;
+                }, 500);
                 this.gameOver.alpha = 0;
                 this.scoreWindow.alpha = 0;
                 this.replayButton.alpha = 0;
@@ -503,6 +523,7 @@ var Flappy;
                 this.game.load.image('pipeBody', 'assets/pipe.png');
                 this.game.load.image('pipeDownCap', 'assets/pipe-down.png');
                 this.game.load.image('pipeUpCap', 'assets/pipe-up.png');
+                this.game.load.image('splash', 'assets/splash.png');
                 this.game.load.image('gameOver', 'assets/game-over.png');
                 this.game.load.image('scoreBoard', 'assets/score-board.png');
                 this.game.load.image('replay', 'assets/replay.png');
@@ -551,12 +572,16 @@ var Flappy;
                     this.scoreCounter.restart();
                 });
                 this.scoreCounter = new Flappy.ScoreCounter(this.game);
+                let d = new Flappy.TutorialSplash(this.game, {
+                    key: 'splash',
+                });
                 /*socket.on('news', (data) =>  {
                     console.log(data);
                     socket.emit('my other event', { my: 'data' });
                 });*/
             }
             update() {
+                console.log(this.scoreBoard.isGameOver);
                 if (this.scoreBoard.isGameOver) {
                     return;
                 }
@@ -575,4 +600,23 @@ var Flappy;
         }
         State.Play = Play;
     })(State = Flappy.State || (Flappy.State = {}));
+})(Flappy || (Flappy = {}));
+var Flappy;
+(function (Flappy) {
+    class TutorialSplash extends Phaser.Sprite {
+        constructor(game, params) {
+            super(game, Flappy.Global.Constants.gameWidth / 2, Flappy.Global.Constants.gameHeight / 2, params.key);
+            this.fixedToCamera = true;
+            this.anchor.set(0.5, 0.5);
+            this.game.input.onDown.add(() => {
+                this.destroy();
+            });
+            this.game.add.existing(this);
+        }
+        update() {
+            this.x = Flappy.Global.Constants.gameWidth / 2;
+            this.y = Flappy.Global.Constants.gameHeight / 2;
+        }
+    }
+    Flappy.TutorialSplash = TutorialSplash;
 })(Flappy || (Flappy = {}));
