@@ -514,7 +514,7 @@ var Flappy;
             this.pointSound.play();
         }
         update() {
-            this.x = Flappy.Global.Constants.gameWidth / 2;
+            this.cameraOffset.x = Flappy.Global.Constants.gameWidth / 2;
             this.text = this.score.toString();
         }
         get score() {

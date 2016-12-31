@@ -28,7 +28,7 @@ namespace Flappy {
         }
 
         public update(): void {
-            this.x = Global.Constants.gameWidth / 2;
+            this.cameraOffset.x = Global.Constants.gameWidth / 2;
             this.text = this.score.toString();
         }
 
