@@ -35,17 +35,25 @@
             <div class="mt-3 mb-3">
                 <div class="form-group row">
                     <div class="col-xs-6 offset-xs-3">
-                        <img class="img-fluid" src="./assets/form/flappy-bird-logo.png">
+                        <img class="img-fluid" src="./assets/form/flappy-bird-logo.png" alt="Flappy Bird Online Logo">
                     </div>
                 </div>
             </div>
+
             <div class="form-group row">
-                <label for="example-text-input" class="col-xs-2 col-form-label">Name</label>
+                <div class="col-xs-10 offset-xs-2">
+                    <h4>Current players online: <span id="players-online"></span></h4>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="player-tag" class="col-xs-2 col-form-label">Name</label>
                 <div class="col-xs-10">
                     <input id="player-tag" class="form-control" type="text" placeholder="e.g. TheLegend27">
                     <small class="form-text text-muted">The name of which other players will see you as.</small>
                 </div>
             </div>
+
             <div class="form-group row">
                 <div class="col-xs-10 offset-xs-2">
                     <button type="button" class="btn btn-primary" onclick="connect();">Connect</button>
@@ -60,13 +68,16 @@
     <div id="game" style="height: 100%"></div>
 
     <script>
-        var game = new Flappy.Game("game");
+        let game = new Flappy.Game("game");
         function connect() {
             let playerTag = $('#player-tag').val();
             game.connect(playerTag, () => {
-                //$('#myModal').modal('hide');
                 $('#login-form').hide();
             });
         }
+
+        $.get(`${Flappy.Global.Constants.serverUrl}/players/stats`, (data) => {
+            $('#players-online').html(data.count);
+        });
     </script>
 </body>
