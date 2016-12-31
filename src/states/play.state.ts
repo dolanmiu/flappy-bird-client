@@ -74,6 +74,10 @@ namespace Flappy.State {
                 this.playerManager.createPlayers(data);
             });
 
+            this.scoreCounter = new ScoreCounter(this.game);
+
+            this.playerManager = new PlayerManager(this.game, BIRD_PARAMS);
+
             this.scoreBoard = new ScoreBoard(this.game, {
                 bronzeMedalKey: 'bronzeMedal',
                 gameOverKey: 'gameOver',
@@ -89,13 +93,9 @@ namespace Flappy.State {
                 this.tutorialSplash.visible = true;
             });
 
-            this.scoreCounter = new ScoreCounter(this.game);
-
             this.tutorialSplash = new TutorialSplash(this.game, {
                 key: 'splash',
             });
-
-            this.playerManager = new PlayerManager(this.game, BIRD_PARAMS);
         }
 
         public update(): void {

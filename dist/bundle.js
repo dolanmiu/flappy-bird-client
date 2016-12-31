@@ -622,6 +622,8 @@ var Flappy;
                 $.get(`${Flappy.Global.Constants.serverUrl}/players`, (data) => {
                     this.playerManager.createPlayers(data);
                 });
+                this.scoreCounter = new Flappy.ScoreCounter(this.game);
+                this.playerManager = new Flappy.PlayerManager(this.game, BIRD_PARAMS);
                 this.scoreBoard = new Flappy.ScoreBoard(this.game, {
                     bronzeMedalKey: 'bronzeMedal',
                     gameOverKey: 'gameOver',
@@ -636,11 +638,9 @@ var Flappy;
                     this.scoreCounter.restart();
                     this.tutorialSplash.visible = true;
                 });
-                this.scoreCounter = new Flappy.ScoreCounter(this.game);
                 this.tutorialSplash = new Flappy.TutorialSplash(this.game, {
                     key: 'splash',
                 });
-                this.playerManager = new Flappy.PlayerManager(this.game, BIRD_PARAMS);
             }
             update() {
                 if (this.scoreBoard.isGameOver) {
