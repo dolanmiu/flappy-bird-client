@@ -12,5 +12,23 @@ namespace Flappy {
             this.nameTag.anchor.x = 0.5;
             this.addChild(this.nameTag);
         }
+
+        public deathSequence(): void {
+            let volume = this.calculateVolume();
+            super.deathSequence(volume);
+        }
+
+        public jump(): void {
+            let volume = this.calculateVolume();
+            super.jump(volume);
+        }
+
+        private calculateVolume(): number {
+            let distance = Math.abs(this.game.camera.x - this.x);
+            let clampedDistance = Math.min(Math.max(distance, 0), 1000);
+            let mappedDistance = Global.Utility.map(clampedDistance, 0, 1000, 0, 1);
+            let volume = 1 - mappedDistance;
+            return volume;
+        }
     }
 }

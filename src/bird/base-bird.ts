@@ -19,14 +19,14 @@ namespace Flappy {
             this.wingSound = this.game.add.audio(params.windSoundKey);
         }
 
-        public jump(): void {
-            this.wingSound.play();
+        public jump(volume?: number): void {
+            this.wingSound.play('', 0, volume);
         }
 
-        public deathSequence(): void {
-            this.hitSound.play();
+        public deathSequence(volume?: number): void {
+            this.hitSound.play('', 0, volume);
             setTimeout(() => {
-                this.dieSound.play();
+                this.dieSound.play('', 0, volume);
             }, 300);
         }
 

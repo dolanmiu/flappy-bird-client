@@ -11,13 +11,13 @@ var Flappy;
             this.dieSound = this.game.add.audio(params.dieSoundKey);
             this.wingSound = this.game.add.audio(params.windSoundKey);
         }
-        jump() {
-            this.wingSound.play();
+        jump(volume) {
+            this.wingSound.play('', 0, volume);
         }
-        deathSequence() {
-            this.hitSound.play();
+        deathSequence(volume) {
+            this.hitSound.play('', 0, volume);
             setTimeout(() => {
-                this.dieSound.play();
+                this.dieSound.play('', 0, volume);
             }, 300);
         }
         calculateAngle(speed) {
@@ -57,7 +57,8 @@ var Flappy;
             }
             this.stop();
             super.deathSequence();
-            this.game.input.onDown.remove(this.jumpy, this);
+            this.game.input.onDown.remove(this.jumpLambda, this);
+            Flappy.Global.socket.emit('death');
         }
         jump() {
             super.jump();
@@ -75,9 +76,9 @@ var Flappy;
             this.body.allowGravity = false;
             this.idleTween = this.game.add.tween(this).to({ y: this.y - 10 }, 1000, Phaser.Easing.Linear.None, false, 0, -1, true);
             this.idleTween.start();
-            this.game.input.onDown.add(this.jumpy, this);
+            this.game.input.onDown.add(this.jumpLambda, this);
         }
-        jumpy() {
+        jumpLambda() {
             if (this.body.allowGravity === false) {
                 this.body.allowGravity = true;
                 this.currentSpeed = Flappy.Global.Constants.gameSpeed;
@@ -105,6 +106,21 @@ var Flappy;
             this.nameTag.strokeThickness = 2;
             this.nameTag.anchor.x = 0.5;
             this.addChild(this.nameTag);
+        }
+        deathSequence() {
+            let volume = this.calculateVolume();
+            super.deathSequence(volume);
+        }
+        jump() {
+            let volume = this.calculateVolume();
+            super.jump(volume);
+        }
+        calculateVolume() {
+            let distance = Math.abs(this.game.camera.x - this.x);
+            let clampedDistance = Math.min(Math.max(distance, 0), 1000);
+            let mappedDistance = Flappy.Global.Utility.map(clampedDistance, 0, 1000, 0, 1);
+            let volume = 1 - mappedDistance;
+            return volume;
         }
     }
     Flappy.MultiplayerBird = MultiplayerBird;
@@ -330,6 +346,20 @@ var Flappy;
             });
             Flappy.Global.socket.on('new-player', (data) => {
                 this.createPlayer(data);
+            });
+            Flappy.Global.socket.on('jump', (data) => {
+                if (!this.players.has(data.id)) {
+                    return;
+                }
+                let player = this.players.get(data.id);
+                player.jump();
+            });
+            Flappy.Global.socket.on('death', (data) => {
+                if (!this.players.has(data.id)) {
+                    return;
+                }
+                let player = this.players.get(data.id);
+                player.deathSequence();
             });
         }
         createPlayers(data) {

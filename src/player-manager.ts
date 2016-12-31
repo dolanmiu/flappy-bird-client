@@ -2,7 +2,7 @@ namespace Flappy {
 
     export interface IPlayer {
         id: string;
-        name: string;
+        name?: string;
     }
 
     export class PlayerManager {
@@ -26,6 +26,22 @@ namespace Flappy {
 
             Global.socket.on('new-player', (data: IPlayer) => {
                 this.createPlayer(data);
+            });
+
+            Global.socket.on('jump', (data: IPlayer) => {
+                if (!this.players.has(data.id)) {
+                    return;
+                }
+                let player = this.players.get(data.id);
+                player.jump();
+            });
+
+            Global.socket.on('death', (data: IPlayer) => {
+                if (!this.players.has(data.id)) {
+                    return;
+                }
+                let player = this.players.get(data.id);
+                player.deathSequence();
             });
         }
 
