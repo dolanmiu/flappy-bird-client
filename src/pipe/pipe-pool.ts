@@ -19,7 +19,7 @@ namespace Flappy {
             for (let pipe of pipes) {
                 let availableHeight = Global.Constants.gameHeight - this.floorHeight - Global.Constants.gapSize;
                 let adjustedLocation = Global.Utility.map(pipe.location, 0, 1, 0.1, 0.9);
-                this.create(LEVEL_OFFSET + pipe.index * Global.Constants.gapSize, adjustedLocation * availableHeight);
+                this.create(LEVEL_OFFSET + pipe.index * Global.Constants.pipeSpacing, adjustedLocation * availableHeight);
             }
         }
 

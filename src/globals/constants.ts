@@ -4,6 +4,7 @@ namespace Flappy.Global {
         public static jumpSpeed: number = 500;
         public static gapSize: number = 160;
         public static gravity: number = 2000;
+        public static pipeSpacing: number = 200;
 
         public static serverUrl: string = 'http://localhost:9001';
 

@@ -162,6 +162,7 @@ var Flappy;
         Constants.jumpSpeed = 500;
         Constants.gapSize = 160;
         Constants.gravity = 2000;
+        Constants.pipeSpacing = 200;
         Constants.serverUrl = 'http://localhost:9001';
         Constants.gameHeight = 665;
         Constants.worldOffset = -1000;
@@ -220,7 +221,7 @@ var Flappy;
             for (let pipe of pipes) {
                 let availableHeight = Flappy.Global.Constants.gameHeight - this.floorHeight - Flappy.Global.Constants.gapSize;
                 let adjustedLocation = Flappy.Global.Utility.map(pipe.location, 0, 1, 0.1, 0.9);
-                this.create(LEVEL_OFFSET + pipe.index * Flappy.Global.Constants.gapSize, adjustedLocation * availableHeight);
+                this.create(LEVEL_OFFSET + pipe.index * Flappy.Global.Constants.pipeSpacing, adjustedLocation * availableHeight);
             }
         }
         create(x, y) {
