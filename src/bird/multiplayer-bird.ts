@@ -6,6 +6,9 @@ namespace Flappy {
         constructor(game: Phaser.Game, x: number, y: number, private displayName: string, params: IBirdParams) {
             super(game, x, y, params);
 
+            this.game.physics.enable(this, Phaser.Physics.ARCADE);
+            this.body.allowGravity = false;
+
             this.nameTag = new Phaser.Text(game, 0, -35, displayName, { font: '12px flappy', fill: 'white' });
             this.nameTag.stroke = 'black';
             this.nameTag.strokeThickness = 2;

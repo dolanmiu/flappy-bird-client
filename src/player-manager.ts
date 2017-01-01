@@ -21,9 +21,16 @@ namespace Flappy {
                 if (player === undefined) {
                     return;
                 }
+                this.game.physics.arcade.moveToXY(
+                    player,
+                    data.x,
+                    data.y,
+                    6000,
+                    20,
+                );
 
-                player.x = data.x;
-                player.y = data.y;
+                //player.x = data.x;
+                //player.y = data.y;
                 player.angle = data.angle;
             });
 

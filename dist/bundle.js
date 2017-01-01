@@ -100,6 +100,8 @@ var Flappy;
         constructor(game, x, y, displayName, params) {
             super(game, x, y, params);
             this.displayName = displayName;
+            this.game.physics.enable(this, Phaser.Physics.ARCADE);
+            this.body.allowGravity = false;
             this.nameTag = new Phaser.Text(game, 0, -35, displayName, { font: '12px flappy', fill: 'white' });
             this.nameTag.stroke = 'black';
             this.nameTag.strokeThickness = 2;
@@ -384,8 +386,9 @@ var Flappy;
                 if (player === undefined) {
                     return;
                 }
-                player.x = data.x;
-                player.y = data.y;
+                this.game.physics.arcade.moveToXY(player, data.x, data.y, 6000, 20);
+                //player.x = data.x;
+                //player.y = data.y;
                 player.angle = data.angle;
             });
             Flappy.Global.socket.on('new-player', (data) => {
