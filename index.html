@@ -20,6 +20,10 @@
             position: absolute;
             width: 100%;
         }
+
+        .text-muted-grey {
+            color: #373a3c !important;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -51,20 +55,20 @@
                 <label for="player-tag" class="col-xs-2 col-form-label">Name</label>
                 <div class="col-xs-10">
                     <input id="player-tag" class="form-control" type="text" placeholder="e.g. TheLegend27">
-                    <small class="form-text text-muted">The name of which other players will see you as.</small>
+                    <small class="form-text text-muted-grey">The name of which other players will see you as.</small>
                 </div>
             </div>
 
             <div class="form-group row">
                 <div class="col-xs-10 offset-xs-2">
                     <button id="connect-button" type="button" class="btn btn-primary" onclick="connect();">Connect</button>
-                    <small class="form-text text-muted">Connection may take a while since the server may have to spin up!</small>
+                    <small class="form-text text-muted-grey">Connection may take a while since the server may have to spin up!</small>
                 </div>
             </div>
 
             <div class="form-group row">
                 <div class="col-xs-10 offset-xs-2">
-                    <small class="form-text text-muted">Made with <i class="fa fa-heart" aria-hidden="true"></i> by Dolan Miu</small>
+                    <small class="form-text text-muted-grey">Made with <i class="fa fa-heart" aria-hidden="true"></i> by Dolan Miu.</small>
                 </div>
             </div>
         </div>
