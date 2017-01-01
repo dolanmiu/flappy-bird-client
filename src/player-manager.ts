@@ -19,13 +19,16 @@ namespace Flappy {
                 let player = this.players.get(data.id);
 
                 if (player === undefined) {
-                    this.createPlayer(data);
                     return;
                 }
 
                 player.x = data.x;
                 player.y = data.y;
                 player.angle = data.angle;
+            });
+
+            Global.socket.on('new-player', (data: IPlayer) => {
+                this.createPlayer(data);
             });
 
             Global.socket.on('jump', (data: IPlayer) => {
