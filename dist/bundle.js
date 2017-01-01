@@ -382,14 +382,12 @@ var Flappy;
             Flappy.Global.socket.on('position', (data) => {
                 let player = this.players.get(data.id);
                 if (player === undefined) {
+                    this.createPlayer(data);
                     return;
                 }
                 player.x = data.x;
                 player.y = data.y;
                 player.angle = data.angle;
-            });
-            Flappy.Global.socket.on('new-player', (data) => {
-                this.createPlayer(data);
             });
             Flappy.Global.socket.on('jump', (data) => {
                 if (!this.players.has(data.id)) {
