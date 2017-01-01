@@ -4,12 +4,13 @@
   "description": "A flappy bird client for the Flappy Bird MMO",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run lint",
     "webpack": "webpack --config config/webpack.config.js",
     "tsc": "tsc -p .",
     "prestart": "npm run tsc",
     "start": "live-server --watch=dist",
-    "postinstall": "typings install"
+    "postinstall": "typings install",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "repository": {
     "type": "git",
