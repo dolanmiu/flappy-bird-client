@@ -59,7 +59,8 @@ namespace Flappy {
 
         public restart(): void {
             let y = this.getRandomStartingY(this.floorHeight);
-            this.reset(100, y);
+            let x = this.getRandomStartingX();
+            this.reset(x, y);
             this.body.allowGravity = false;
             this.idleTween = this.game.add.tween(this).to({ y: this.y - 10 }, 1000, Phaser.Easing.Linear.None, false, 0, -1, true);
             this.idleTween.start();
@@ -84,6 +85,12 @@ namespace Flappy {
 
         private getRandomStartingY(offset: number): number {
             let availableHeight = Global.Constants.gameHeight - offset;
+            let adjustedLocation = Global.Utility.map(Math.random(), 0, 1, 0.2, 0.8);
+            return adjustedLocation * availableHeight;
+        }
+
+        private getRandomStartingX(): number {
+            let availableHeight = 200;
             let adjustedLocation = Global.Utility.map(Math.random(), 0, 1, 0.2, 0.8);
             return adjustedLocation * availableHeight;
         }
