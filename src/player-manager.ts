@@ -28,9 +28,6 @@ namespace Flappy {
                     6000,
                     20,
                 );
-
-                //player.x = data.x;
-                //player.y = data.y;
                 player.angle = data.angle;
             });
 
