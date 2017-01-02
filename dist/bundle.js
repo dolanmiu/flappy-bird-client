@@ -38,6 +38,9 @@ var Flappy;
             if (this.body.velocity.y >= Flappy.Global.Constants.terminalVelocity) {
                 this.body.velocity.y = Flappy.Global.Constants.terminalVelocity;
             }
+            if (this.y <= -100) {
+                this.y = -100;
+            }
             this.angle = this.calculateAngle(this.body.velocity.y);
             this.x += this.game.time.elapsed * this.currentSpeed;
             Flappy.Global.socket.emit('position', {
