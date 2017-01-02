@@ -25,6 +25,20 @@
         .text-muted-grey {
             color: #373a3c !important;
         }
+
+        #chat-input {
+            position: fixed;
+            left: calc(50% - 25vh);
+            bottom: 30px;
+            padding: 6px;
+            border: 3px solid #543847;
+            width: 50vh;
+            color: #543847;
+        }
+        
+        *:focus {
+            outline: none;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -75,6 +89,10 @@
         </div>
     </div>
 
+    <form id="chat-form">
+        <input id="chat-input" placeholder="Chatbox. Press Enter to send (Coming soon)" autocomplete="off" disabled>
+    </form>
+
     <!-- Workaround: for some reason, fonts will only work if this specific div is there -->
     <div class="workaround">0</div>
 
@@ -92,6 +110,11 @@
                 $('#login-form').hide();
             });
         }
+
+        $('#chat-form').submit(function(e) {
+            e.preventDefault();
+            $('#chat-input').val('');
+        });
 
         $.get(`${Flappy.Global.Constants.serverUrl}/players/stats`, (data) => {
             $('#players-online').html(data.count);
