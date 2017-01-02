@@ -34,7 +34,8 @@ namespace Flappy {
         }
 
         private calculateVolume(): number {
-            let distance = Math.abs(this.game.camera.x - this.x);
+            let offsettedCamera = this.game.camera.x + Global.Constants.gameWidth / 2;
+            let distance = Math.abs(offsettedCamera - this.x);
             let clampedDistance = Math.min(Math.max(distance, 0), 1000);
             let mappedDistance = Global.Utility.map(clampedDistance, 0, 1000, 0, 1);
             let volume = 1 - mappedDistance;

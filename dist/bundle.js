@@ -70,7 +70,8 @@ var Flappy;
         }
         restart() {
             let y = this.getRandomStartingY(this.floorHeight);
-            this.reset(100, y);
+            let x = this.getRandomStartingX();
+            this.reset(x, y);
             this.body.allowGravity = false;
             this.idleTween = this.game.add.tween(this).to({ y: this.y - 10 }, 1000, Phaser.Easing.Linear.None, false, 0, -1, true);
             this.idleTween.start();
@@ -91,6 +92,11 @@ var Flappy;
         }
         getRandomStartingY(offset) {
             let availableHeight = Flappy.Global.Constants.gameHeight - offset;
+            let adjustedLocation = Flappy.Global.Utility.map(Math.random(), 0, 1, 0.2, 0.8);
+            return adjustedLocation * availableHeight;
+        }
+        getRandomStartingX() {
+            let availableHeight = 200;
             let adjustedLocation = Flappy.Global.Utility.map(Math.random(), 0, 1, 0.2, 0.8);
             return adjustedLocation * availableHeight;
         }
@@ -125,7 +131,8 @@ var Flappy;
             this.nameTag.y = -35 * Math.cos(this.angle * (Math.PI / 180));
         }
         calculateVolume() {
-            let distance = Math.abs(this.game.camera.x - this.x);
+            let offsettedCamera = this.game.camera.x + Flappy.Global.Constants.gameWidth / 2;
+            let distance = Math.abs(offsettedCamera - this.x);
             let clampedDistance = Math.min(Math.max(distance, 0), 1000);
             let mappedDistance = Flappy.Global.Utility.map(clampedDistance, 0, 1000, 0, 1);
             let volume = 1 - mappedDistance;
@@ -390,8 +397,6 @@ var Flappy;
                     return;
                 }
                 this.game.physics.arcade.moveToXY(player, data.x, data.y, 6000, 20);
-                //player.x = data.x;
-                //player.y = data.y;
                 player.angle = data.angle;
             });
             Flappy.Global.socket.on('new-player', (data) => {
