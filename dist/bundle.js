@@ -134,7 +134,7 @@ var Flappy;
             let offsettedCamera = this.game.camera.x + Flappy.Global.Constants.gameWidth / 2;
             let distance = Math.abs(offsettedCamera - this.x);
             let clampedDistance = Math.min(Math.max(distance, 0), 1000);
-            let mappedDistance = Flappy.Global.Utility.map(clampedDistance, 0, 1000, 0, 1);
+            let mappedDistance = Flappy.Global.Utility.map(clampedDistance, 0, 1000, 0, 0.8);
             let volume = 1 - mappedDistance;
             return volume;
         }
