@@ -24,6 +24,10 @@ namespace Flappy {
                 this.y = -100;
             }
 
+            if (this.y >= Global.Constants.gameHeight - this.floorHeight) {
+                this.y = Global.Constants.gameHeight - this.floorHeight;
+            }
+
             this.angle = this.calculateAngle(this.body.velocity.y);
 
             this.x += this.game.time.elapsed * this.currentSpeed;

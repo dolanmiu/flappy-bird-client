@@ -41,6 +41,9 @@ var Flappy;
             if (this.y <= -100) {
                 this.y = -100;
             }
+            if (this.y >= Flappy.Global.Constants.gameHeight - this.floorHeight) {
+                this.y = Flappy.Global.Constants.gameHeight - this.floorHeight;
+            }
             this.angle = this.calculateAngle(this.body.velocity.y);
             this.x += this.game.time.elapsed * this.currentSpeed;
             Flappy.Global.socket.emit('position', {
