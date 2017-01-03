@@ -11,11 +11,11 @@ namespace Flappy {
             });
         }
 
-        public connect(name: string, callback: () => {}): void {
+        public connect(name: string, callback: (socket: SocketIOClient.Socket) => {}): void {
             Global.socket = io.connect(Global.Constants.serverUrl, { query: `name=${name}` });
             Global.socket.on('connect', () => {
                 this.state.start('play');
-                callback();
+                callback(Global.socket);
             });
         }
     }

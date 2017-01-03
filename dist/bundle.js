@@ -177,7 +177,7 @@ var Flappy;
             Flappy.Global.socket = io.connect(Flappy.Global.Constants.serverUrl, { query: `name=${name}` });
             Flappy.Global.socket.on('connect', () => {
                 this.state.start('play');
-                callback();
+                callback(Flappy.Global.socket);
             });
         }
     }

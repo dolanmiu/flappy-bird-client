@@ -5,6 +5,10 @@
         body {
             margin: 0;
         }
+
+        form {
+            margin: 0;
+        }
         
         .workaround {
             font-family: flappy;
@@ -26,18 +30,36 @@
             color: #373a3c !important;
         }
 
+        #chat-form {
+            width: 100%;
+        }
+
         #chat-input {
-            position: fixed;
-            left: calc(50% - 25vh);
-            bottom: 30px;
             padding: 6px;
             border: 3px solid #543847;
-            width: 50vh;
+            width: 100%;
             color: #543847;
         }
         
         *:focus {
             outline: none;
+        }
+
+        #chat-box {
+            position: fixed;
+            left: calc(50% - 50vh);
+            bottom: 30px;
+            width: 100vh;
+            display: none;
+        }
+
+        #messages-box {
+            padding: 9px;
+            max-height: 147px;
+            width: 100%;
+            overflow-y: hidden;
+            font-size: 0.7em;
+            line-height: 0;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
@@ -89,9 +111,13 @@
         </div>
     </div>
 
-    <form id="chat-form">
-        <input id="chat-input" placeholder="Chatbox. Press Enter to send (Coming soon)" autocomplete="off" disabled>
-    </form>
+    <div id="chat-box">
+        <div id="messages-box"></div>
+        <form id="chat-form">
+            <input id="chat-input" placeholder="Chatbox. Press Enter to send" autocomplete="off">
+        </form>
+    </div>
+
 
     <!-- Workaround: for some reason, fonts will only work if this specific div is there -->
     <div class="workaround">0</div>
@@ -100,20 +126,34 @@
 
     <script>
         let flappyGame = new Flappy.Game("game");
+        let currentSocket;
+
         function connect() {
             let connectButton = $('#connect-button');
+            
             connectButton.attr('disabled', true);
             connectButton.html('Connecting... <i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i>');
 
             let playerTag = $('#player-tag').val();
-            flappyGame.connect(playerTag, () => {
+            flappyGame.connect(playerTag, (socket) => {
                 $('#login-form').hide();
+                currentSocket = socket;
+                socket.on('chat-message', (payload) => {
+                    $('#messages-box').append(`<p><strong>${payload.name}:</strong> ${payload.message}</p>`);
+                    $('#messages-box').scrollTop($('#messages-box')[0].scrollHeight);
+                });
             });
+            $('#chat-box').show();
         }
 
         $('#chat-form').submit(function(e) {
+            let chatInput = $('#chat-input');
             e.preventDefault();
-            $('#chat-input').val('');
+            if (chatInput.val() === '') {
+                return;
+            }
+            currentSocket.emit('chat-message', chatInput.val());
+            chatInput.val('');
         });
 
         $.get(`${Flappy.Global.Constants.serverUrl}/players/stats`, (data) => {
