@@ -139,7 +139,7 @@
                 $('#login-form').hide();
                 currentSocket = socket;
                 socket.on('chat-message', (payload) => {
-                    $('<div/>').text(payload.message).appendTo($('#messages-box'));
+                    $('<div/>').text(`<p><strong>${payload.name}:</strong> ${payload.message}</p>`).appendTo($('#messages-box'));
                     $('#messages-box').scrollTop($('#messages-box')[0].scrollHeight);
                 });
             });
