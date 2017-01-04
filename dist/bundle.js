@@ -203,7 +203,7 @@ var Flappy;
         }
         Constants.gameSpeed = 0.1;
         Constants.jumpSpeed = 500;
-        Constants.gapSize = 155;
+        Constants.gapSize = 185;
         Constants.gravity = 2000;
         Constants.pipeSpacing = 200;
         Constants.terminalVelocity = 700;
