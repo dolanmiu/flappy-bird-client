@@ -97,6 +97,21 @@
             </div>
 
             <div class="form-group row">
+                <label for="player-color" class="col-xs-2 col-form-label">Colour</label>
+                <div class="col-xs-10">
+                    <select id="player-color" class="form-control">
+                        <option value="0xf8b733">Yellow</option>
+                        <option value="0x61f833">Green</option>
+                        <option value="0x33ccf8">Blue</option>
+                        <option value="0xf83341">Red</option>
+                        <option value="0xf833be">Pink</option>
+                        <option value="0xd5d5d5">Grey</option>
+                    </select>
+                    <small class="form-text text-muted-grey">The name of which other players will see you as.</small>
+                </div>
+            </div>
+
+            <div class="form-group row">
                 <div class="col-xs-10 offset-xs-2">
                     <button id="connect-button" type="button" class="btn btn-primary" onclick="connect();">Connect</button>
                     <small class="form-text text-muted-grey">Connection may take a while since the server may have to spin up!</small>
@@ -135,7 +150,12 @@
             connectButton.html('Connecting... <i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i>');
 
             let playerTag = $('#player-tag').val();
-            flappyGame.connect(playerTag, (socket) => {
+            let playerColor = $('#player-color').val();
+            
+            flappyGame.connect({
+                name: playerTag,
+                color: playerColor,
+            }, (socket) => {
                 $('#login-form').hide();
                 currentSocket = socket;
                 socket.on('chat-message', (payload) => {

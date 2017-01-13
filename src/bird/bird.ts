@@ -5,10 +5,9 @@ namespace Flappy {
         protected currentSpeed: number;
         protected idleTween: Phaser.Tween;
 
-        constructor(game: Phaser.Game, private floorHeight: number, params: IBirdParams) {
-            super(game, 100, 0, params);
+        constructor(game: Phaser.Game, private floorHeight: number, tint: number, params: IBirdParams) {
+            super(game, 100, 0, tint, params);
 
-            this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.currentSpeed = 0;
             this.restart();
 
