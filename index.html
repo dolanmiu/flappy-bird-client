@@ -166,6 +166,12 @@
             $('#chat-box').show();
         }
 
+        function randomiseColor() {
+            let options = $('#player-color').find('option');
+            let random = ~~(Math.random() * options.length);
+            options.eq(random).prop('selected', true);
+        }
+
         $('#chat-form').submit(function(e) {
             let chatInput = $('#chat-input');
             e.preventDefault();
@@ -179,5 +185,7 @@
         $.get(`${Flappy.Global.Constants.serverUrl}/players/stats`, (data) => {
             $('#players-online').html(data.count);
         });
+
+        randomiseColor();
     </script>
 </body>
