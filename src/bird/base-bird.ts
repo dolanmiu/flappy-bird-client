@@ -22,6 +22,7 @@ namespace Flappy {
             colorSprite.animations.add('fly');
             colorSprite.animations.play('fly', 3, true);
             colorSprite.blendMode = PIXI.blendModes.OVERLAY;
+            colorSprite.alpha = 0.7;
             this.game.physics.enable(colorSprite, Phaser.Physics.ARCADE);
             colorSprite.body.allowGravity = false;
             colorSprite.tint = tint;
