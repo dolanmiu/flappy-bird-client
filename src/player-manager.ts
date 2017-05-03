@@ -3,6 +3,7 @@ namespace Flappy {
     export interface IPlayer {
         id: string;
         name?: string;
+        color: number;
     }
 
     export class PlayerManager {
@@ -80,7 +81,7 @@ namespace Flappy {
                 return;
             }
             // Off stage to hide
-            let player = new MultiplayerBird(this.game, -1000, -1000, data.name, this.birdParams);
+            let player = new MultiplayerBird(this.game, -1000, -1000, data.name, data.color, this.birdParams);
             this.group.add(player);
             this.players.set(data.id, player);
         }

@@ -1,4 +1,9 @@
 namespace Flappy {
+    export interface IConnectionDetails {
+        name: string;
+        color: number;
+    }
+
     export class Game extends Phaser.Game {
         constructor(elementName: string) {
             let element = document.getElementById(elementName);
@@ -11,12 +16,13 @@ namespace Flappy {
             });
         }
 
-        public connect(name: string, callback: (socket: SocketIOClient.Socket) => {}): void {
-            Global.socket = io.connect(Global.Constants.serverUrl, { query: `name=${name}` });
+        public connect(connectionDetails: IConnectionDetails, callback: (socket: SocketIOClient.Socket) => {}): void {
+            Global.socket = io.connect(Global.Constants.serverUrl, { query: `name=${connectionDetails.name}&color=${connectionDetails.color}` });
             Global.socket.on('connect', () => {
                 this.state.start('play');
                 callback(Global.socket);
             });
+            Global.connectionDetails = connectionDetails;
         }
     }
 }

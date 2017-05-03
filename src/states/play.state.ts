@@ -3,6 +3,7 @@ namespace Flappy.State {
     const FLOOR_HEIGHT: number = 112;
     const SKY_HEIGHT: number = 109;
     const BIRD_PARAMS: IBirdParams = {
+        colorKey: 'birdColor',
         dieSoundKey: 'die',
         hitSoundKey: 'hit',
         key: 'bird',
@@ -23,6 +24,7 @@ namespace Flappy.State {
 
         public preload(): void {
             this.game.load.spritesheet('bird', 'assets/bird.png', 34, 24);
+            this.game.load.spritesheet('birdColor', 'assets/bird-color-layer.png', 34, 24);
             this.game.load.image('sky', 'assets/sky.png');
             this.game.load.image('floor', 'assets/land.png');
             this.game.load.image('pipeBody', 'assets/pipe.png');
@@ -64,7 +66,7 @@ namespace Flappy.State {
 
             this.pipePool = new PipePool(this.game, FLOOR_HEIGHT);
             this.floor = new Floor(this.game, FLOOR_HEIGHT, 'floor');
-            this.bird = new Bird(this.game, FLOOR_HEIGHT, BIRD_PARAMS);
+            this.bird = new Bird(this.game, FLOOR_HEIGHT, Global.connectionDetails.color, BIRD_PARAMS);
 
             this.game.camera.follow(this.bird, Phaser.Camera.FOLLOW_PLATFORMER);
 
