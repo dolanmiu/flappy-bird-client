@@ -7,7 +7,7 @@
     "test": "npm run lint",
     "webpack": "webpack --config config/webpack.config.js",
     "tsc": "tsc -p .",
-    "uglify": "uglifyjs --compress --mangle --output='dist/bundle.js' -- dist/bundle.js",
+    "uglify": "uglifyjs --compress --mangle --output=\"dist/bundle.js\" -- dist/bundle.js",
     "prestart": "npm run build",
     "start": "live-server --watch=dist",
     "postinstall": "typings install",
