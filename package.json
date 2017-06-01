@@ -7,7 +7,7 @@
     "test": "npm run lint",
     "webpack": "webpack --config config/webpack.config.js",
     "tsc": "tsc -p .",
-    "uglify": "uglifyjs --compress --mangle --output=\"dist/bundle.js\" -- dist/bundle.js",
+    "uglify": "jsmin --output dist/bundle.js dist/bundle.js",
     "prestart": "npm run build",
     "start": "live-server --watch=dist",
     "postinstall": "typings install",
@@ -29,11 +29,11 @@
   },
   "devDependencies": {
     "awesome-typescript-loader": "^3.0.0-beta.17",
+    "jsmin": "^1.0.1",
     "live-server": "^1.1.0",
     "tslint": "^4.1.1",
     "typescript": "^2.1.4",
     "typings": "^2.0.0",
-    "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "webpack": "^1.14.0"
   }
 }
